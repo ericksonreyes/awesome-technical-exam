@@ -1,0 +1,10 @@
+/.idea
+/build/logs/*
+/node_modules
+/vendor
+/bin
+Homestead.json
+Homestead.yaml
+.DS_Store
+parameters.yml
+.env
