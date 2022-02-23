@@ -21,37 +21,19 @@ tags:
     description: Secured API end points.
 
 components:
-  headers:
-    ResourceCount:
-      description: Number of resources in the current page.
-      schema:
-        type: integer
-    ResourceTotal:
-      description: Total number of resources in the collection.
-      schema:
-        type: integer
-    ResourcesPerPage:
-      description: Maximum number of resources allowed in a page.
-      schema:
-        type: integer
-    PageCount:
-      description: Total number of pages in the collection.
-      schema:
-        type: integer
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
   parameters:
-    Id:
-      name: id
-      in: path
-      description: Unique identifier of a resource.
-      required: true
+    Query:
+      name: query
+      in: query
+      description: Search for resources containing the search keyword.
+      required: false
       schema:
         type: string
-        example: C301ED91-B8BA-46A5-97D6-31217CD0CFE8
     PageNumber:
       name: page
       in: query
@@ -128,7 +110,7 @@ components:
               description: Error description.
 
 paths:
-  /users:
+  /registration:
     post:
       tags:
         - Public
@@ -262,6 +244,147 @@ paths:
                     type: integer
                     description: Number of seconds that the access token will be valid.
                     example: 3600
+        '301':
+          description: Resource moved permanently.
+        '302':
+          description: Resource moved temporarily.
+        '304':
+          description: Resource has not changed or modified.
+        '400':
+          description: Invalid, incomplete or malformed request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: User session has expired.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '402':
+          description: The resource you are trying to access requires a payment to be settled.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: User has no permission to access this resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Resource does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Request method is not supported for the requested resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '408':
+          description: Request timeout.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Resource already exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '410':
+          description: Resource was permanently deleted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '415':
+          description: You are uploading an unsupported file.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Request format is correct but failed in validation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: A server or application error was encountered.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '501':
+          description: The request method you are using is not yet implemented.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '502':
+          description: The server was acting as a gateway or proxy and received an invalid response from the upstream server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: The server is unavailable at the moment.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '504':
+          description: The server was acting as a gateway or proxy and did not receive a timely response from the upstream server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '507':
+          description: Insufficient storage.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /users:
+    get:
+      tags:
+        - Secured
+      summary: Find Gitlab users
+      operationId: findGitlabUsers
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PageNumber'
+        - $ref: '#/components/parameters/RecordsPerPage'
+        - $ref: '#/components/parameters/Query'
+      responses:
+        '200':
+          description: A collection of stored resources.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _embedded:
+                    type: object
+                    properties:
+                      users:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/User'
         '301':
           description: Resource moved permanently.
         '302':
