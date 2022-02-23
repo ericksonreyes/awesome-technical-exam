@@ -1,0 +1,15 @@
+formatter.name: pretty
+stop_on_failure: false
+
+suites:
+  default:
+    src_path: '%paths.config%/src'
+    spec_path: '%paths.config%/tests'
+
+extensions:
+  DDDHelper\SpecGen\DomainCodeGenerator: ~
+  LeanPHP\PhpSpec\CodeCoverage\CodeCoverageExtension:
+    format:
+      - html
+    output:
+      html: ./build/logs/phpspec_coverage

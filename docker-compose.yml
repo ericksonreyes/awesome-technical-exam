@@ -1,0 +1,125 @@
+version: '3.8'
+
+services:
+
+  redis:
+    build:
+      context: .
+      dockerfile: config/docker/redis.Dockerfile
+    ports:
+      - '6379:6379'
+    restart: unless-stopped
+    networks:
+      - 'exam_network'
+    container_name: 'redis'
+    volumes:
+      - 'redis_data:/data'
+
+
+  mysql:
+    build:
+      context: .
+      dockerfile: config/docker/mysql.Dockerfile
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: homestead
+      MYSQL_USER: homestead
+      MYSQL_PASSWORD: secret
+    volumes:
+      - './storage/mysql:/var/log/mysql'
+      - 'mysql_data:/var/lib/mysql'
+    restart: unless-stopped
+    ports:
+      - '3306:3306'
+    networks:
+      - 'exam_network'
+    container_name: 'mysql'
+
+
+
+  composer:
+    build:
+      context: .
+      dockerfile: config/docker/composer.Dockerfile
+    volumes:
+      - './:/var/www/html'
+      - 'composer_cache:/tmp'
+    tty: true
+    network_mode: host
+    container_name: 'composer'
+
+
+
+  npm:
+    build:
+      context: .
+      dockerfile: config/docker/npm.Dockerfile
+    volumes:
+      - './:/var/www/html'
+      - 'npm_cache:/root/.npm'
+    tty: true
+    network_mode: host
+    container_name: 'npm'
+
+
+
+  php:
+    build:
+      context: .
+      dockerfile: config/docker/php-cli.Dockerfile
+    volumes:
+      - './:/var/www/html'
+      - './storage/php:/var/log'
+    tty: true
+    networks:
+      - 'exam_network'
+    container_name: 'php-cli'
+
+
+
+  phpfpm:
+    build:
+      context: .
+      dockerfile: config/docker/php-fpm.Dockerfile
+    volumes:
+      - './:/var/www/html'
+      - './storage/php:/var/log'
+    restart: unless-stopped
+    networks:
+      - 'exam_network'
+    container_name: 'php-fpm'
+
+
+
+  exam:
+    build:
+      context: .
+      dockerfile: config/docker/nginx.Dockerfile
+    ports:
+      - '8000:80'
+    volumes:
+      - './:/var/www/html'
+      - './storage/nginx:/var/log/nginx'
+    restart: unless-stopped
+    depends_on:
+      - redis
+      - phpfpm
+      - mysql
+    networks:
+      - 'exam_network'
+    container_name: 'nginx'
+
+
+
+networks:
+  exam_network:
+
+
+
+volumes:
+  redis_data:
+  mysql_data:
+  rabbitmq_data:
+  elasticsearch_data:
+  composer_cache:
+  npm_cache:
