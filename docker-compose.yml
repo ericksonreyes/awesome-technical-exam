@@ -7,7 +7,7 @@ services:
       context: .
       dockerfile: config/docker/redis.Dockerfile
     ports:
-      - '6379:6379'
+      - '16379:6379'
     restart: unless-stopped
     networks:
       - 'exam_network'
@@ -30,7 +30,7 @@ services:
       - 'mysql_data:/var/lib/mysql'
     restart: unless-stopped
     ports:
-      - '3306:3306'
+      - '13306:3306'
     networks:
       - 'exam_network'
     container_name: 'mysql'
@@ -73,7 +73,7 @@ services:
     tty: true
     networks:
       - 'exam_network'
-    container_name: 'php-cli'
+    container_name: 'phpcli'
 
 
 
@@ -87,7 +87,7 @@ services:
     restart: unless-stopped
     networks:
       - 'exam_network'
-    container_name: 'php-fpm'
+    container_name: 'phpfpm'
 
 
 
@@ -96,7 +96,7 @@ services:
       context: .
       dockerfile: config/docker/nginx.Dockerfile
     ports:
-      - '8000:80'
+      - '18000:80'
     volumes:
       - './:/var/www/html'
       - './storage/nginx:/var/log/nginx'

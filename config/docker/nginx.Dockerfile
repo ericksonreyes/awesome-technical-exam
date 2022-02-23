@@ -6,4 +6,4 @@ COPY config/docker/config/nginx/conf.d/default.conf .
 
 RUN chown -R nobody:nobody /var/log/nginx
 
-EXPOSE 8000
+EXPOSE 80
