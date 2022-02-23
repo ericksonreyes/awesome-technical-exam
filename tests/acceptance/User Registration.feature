@@ -5,9 +5,9 @@ Feature: User registration
 
 
   Scenario Outline: Successful registration.
-    Given my e-mail is <email>
-    And my password is <password>
-    And I confirm that my password is <password_confirmation>
+    Given my e-mail is "<email>"
+    And my password is "<password>"
+    And I confirm that my password is "<password_confirmation>"
     When I submit my registration information
     Then my registration will be accepted
 
@@ -18,8 +18,8 @@ Feature: User registration
 
 
   Scenario Outline: E-mail was left blank.
-    Given my password is <password>
-    And I confirm that my password is <password_confirmation>
+    Given my password is "<password>"
+    And I confirm that my password is "<password_confirmation>"
     When I submit my registration information
     Then my registration will be rejected because the e-mail was left blank
 
@@ -29,7 +29,7 @@ Feature: User registration
 
 
   Scenario Outline: Passwords were left blank.
-    Given my e-mail is <email>
+    Given my e-mail is "<email>"
     When I submit my registration information
     Then my registration will be rejected because the passwords were left blank
 
@@ -39,9 +39,9 @@ Feature: User registration
 
 
   Scenario Outline: E-mail is already used.
-    Given my e-mail is <email>
-    And my password is <password>
-    And I confirm that my password is <password_confirmation>
+    Given my e-mail is "<email>"
+    And my password is "<password>"
+    And I confirm that my password is "<password_confirmation>"
     When I submit my registration information
     Then my registration will be accepted
     When I try to register using the same e-mail again
@@ -53,9 +53,9 @@ Feature: User registration
 
 
   Scenario Outline: E-mail is not valid.
-    Given my e-mail is <email>
-    And my password is <password>
-    And I confirm that my password is <password_confirmation>
+    Given my e-mail is "<email>"
+    And my password is "<password>"
+    And I confirm that my password is "<password_confirmation>"
     When I submit my registration information
     Then my registration will be rejected because the e-mail is invalid
 
@@ -67,10 +67,10 @@ Feature: User registration
 
 
   Scenario Outline: Password is too short.
-    Given my e-mail is <email>
-    And my password is <password>
-    And I confirm that my password is <password_confirmation>
-    And the minimum length of the password is <minimum_password_length>
+    Given my e-mail is "<email>"
+    And my password is "<password>"
+    And I confirm that my password is "<password_confirmation>"
+    And the minimum length of the password is "<minimum_password_length>"
     When I submit my registration information
     Then my registration will be rejected
     And I will be informed that the password is provided is too short
@@ -82,9 +82,9 @@ Feature: User registration
 
 
   Scenario Outline: Passwords doesn't match.
-    Given my e-mail is <email>
-    And my password is <password>
-    And I confirm that my password is <password_confirmation>
+    Given my e-mail is "<email>"
+    And my password is "<password>"
+    And I confirm that my password is "<password_confirmation>"
     When I submit my registration information
     Then my registration will be rejected because the password does not match
 
