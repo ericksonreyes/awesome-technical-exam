@@ -1,12 +1,12 @@
 # Backend Developer Assessment
 
-## Technology to be used
+## Technologies
 - PHP
 - Redis
 - MySQL
 - Choose a framework that you are familiar with.
 
-## Requirement 
+## Requirements
 Create PHP API project that has an API endpoint that takes a list of github
 usernames (up to a maximum of 10 names) and returns to the user a list of basic
 information for those users including:
