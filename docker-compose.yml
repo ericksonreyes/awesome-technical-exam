@@ -26,7 +26,7 @@ services:
       MYSQL_USER: homestead
       MYSQL_PASSWORD: secret
     volumes:
-      - './storage/mysql:/var/log/mysql'
+      - './storage/mysql:/var/log/mysql:delegated'
       - 'mysql_data:/var/lib/mysql'
     restart: unless-stopped
     ports:
