@@ -14,15 +14,15 @@ RUN composer --ignore-platform-reqs install
 
 
 
-FROM php:8.1.1-cli-alpine
+FROM php:8.1.1-cli
 
-RUN apk update && apk add curl git wget
-
-RUN apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS
+RUN docker-php-ext-install pdo pdo_mysql bcmath sockets opcache && docker-php-ext-enable opcache
 
 RUN pecl update-channels
 
-RUN docker-php-ext-install pdo pdo_mysql bcmath sockets opcache && docker-php-ext-enable opcache && pecl install apcu && docker-php-ext-enable apcu && pecl install pcov && docker-php-ext-enable pcov
+RUN pecl install pcov && docker-php-ext-enable pcov
+
+RUN pecl install apcu && docker-php-ext-enable apcu
 
 WORKDIR /usr/local/etc/php/conf.d/
 

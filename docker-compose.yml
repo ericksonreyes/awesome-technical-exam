@@ -55,7 +55,7 @@ services:
       context: .
       dockerfile: config/docker/npm.Dockerfile
     volumes:
-      - './:/var/www/html'
+      - './:/var/www/html:delegated'
       - 'npm_cache:/root/.npm'
     tty: true
     network_mode: host
@@ -68,8 +68,8 @@ services:
       context: .
       dockerfile: config/docker/php-cli.Dockerfile
     volumes:
-      - './:/var/www/html'
-      - './storage/php:/var/log'
+      - './:/var/www/html:delegated'
+      - './storage/php:/var/log:delegated'
     tty: true
     networks:
       - 'exam_network'
@@ -82,8 +82,8 @@ services:
       context: .
       dockerfile: config/docker/php-fpm.Dockerfile
     volumes:
-      - './:/var/www/html'
-      - './storage/php:/var/log'
+      - './:/var/www/html:delegated'
+      - './storage/php:/var/log:delegated'
     restart: unless-stopped
     networks:
       - 'exam_network'
@@ -98,8 +98,8 @@ services:
     ports:
       - '18000:80'
     volumes:
-      - './:/var/www/html'
-      - './storage/nginx:/var/log/nginx'
+      - './:/var/www/html:delegated'
+      - './storage/nginx:/var/log/nginx:delegated'
     restart: unless-stopped
     depends_on:
       - redis
