@@ -128,6 +128,97 @@ components:
               description: Error description.
 
 paths:
+  /users:
+    post:
+      tags:
+        - Public
+      summary: Account registration end point.
+      operationId: registerAccount
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+              properties:
+                email:
+                  description: E-mail address.
+                  type: string
+                  format: email
+                password:
+                  description: Password.
+                  type: string
+                  format: password
+                passwordConfirmation:
+                  description: Password confirmation.
+                  type: string
+                  format: password
+      responses:
+        '201':
+          description: Account created.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  accessToken:
+                    type: string
+                  tokenType:
+                    type: string
+                  expiresIn:
+                    type: string
+        '400':
+          description: Invalid, incomplete or malformed request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Duplicate resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Request format is correct but failed in validation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: A server or application error was encountered.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '502':
+          description: The server was acting as a gateway or proxy and received an invalid response from the upstream server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: The server is unavailable at the moment.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '504':
+          description: The server was acting as a gateway or proxy and did not receive a timely response from the upstream server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /access_token:
     post:
       tags:
