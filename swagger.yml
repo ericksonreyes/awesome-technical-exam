@@ -1,0 +1,287 @@
+openapi: 3.0.2
+info:
+  title: Github Users REST API Server
+  description: Github Users REST API Server for technical exam completion
+  contact:
+    email: ercbluemonday@yahoo.com
+  version: 1.0.0
+servers:
+  - url: 'http://localhost:8000/v1/api'
+    description: Local Server
+    variables:
+      protocol:
+        enum:
+          - http
+        default: http
+
+tags:
+  - name: Public
+    description: Public API end points.
+  - name: Secured
+    description: Secured API end points.
+
+components:
+  headers:
+    ResourceCount:
+      description: Number of resources in the current page.
+      schema:
+        type: integer
+    ResourceTotal:
+      description: Total number of resources in the collection.
+      schema:
+        type: integer
+    ResourcesPerPage:
+      description: Maximum number of resources allowed in a page.
+      schema:
+        type: integer
+    PageCount:
+      description: Total number of pages in the collection.
+      schema:
+        type: integer
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    Id:
+      name: id
+      in: path
+      description: Unique identifier of a resource.
+      required: true
+      schema:
+        type: string
+        example: C301ED91-B8BA-46A5-97D6-31217CD0CFE8
+    PageNumber:
+      name: page
+      in: query
+      description: Number of items to skip before returning the results.
+      required: false
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        default: 1
+    RecordsPerPage:
+      name: size
+      in: query
+      description: Maximum number of items to return.
+      required: false
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 100
+        default: 10
+  schemas:
+    User:
+      title: Github User
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+          description: Github user identifier.
+          readOnly: true
+        login:
+          type: string
+          example: octocat
+          description: Github username.
+          readOnly: true
+        name:
+          type: string
+          example: monalisa octocat
+          description: Github user full name.
+          readOnly: true
+        email:
+          type: string
+          example: monalisa.octocat@github.com
+          description: Github user e-mail.
+          readOnly: true
+        company:
+          type: string
+          example: Github
+          description: Company where the Github user is working in.
+        followers:
+          type: integer
+          example: 1
+          description: Total number of followers.
+          readOnly: true
+        avg_followers_per_repository:
+          type: integer
+          example: 12
+          description: Average number of followers per repository.
+          readOnly: true
+    Error:
+      type: object
+      properties:
+        _error:
+          type: object
+          description: Error Details.
+          readOnly: true
+          properties:
+            code:
+              type: string
+              description: Error code.
+            message:
+              type: string
+              description: Error description.
+
+paths:
+  /access_token:
+    post:
+      tags:
+        - Public
+      summary: Requests for an access token.
+      operationId: getOneAccessToken
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  minLength: 8
+                  example: ercbluemonday@yahoo.com
+                password:
+                  type: string
+                  format: password
+      responses:
+        '200':
+          description: User successfully authenticated.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                    description: The access token string as issued by the authorization server.
+                  tokenType:
+                    type: string
+                    description: The type of token this is.
+                    example: bearer
+                  expiresIn:
+                    type: integer
+                    description: Number of seconds that the access token will be valid.
+                    example: 3600
+        '301':
+          description: Resource moved permanently.
+        '302':
+          description: Resource moved temporarily.
+        '304':
+          description: Resource has not changed or modified.
+        '400':
+          description: Invalid, incomplete or malformed request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: User session has expired.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '402':
+          description: The resource you are trying to access requires a payment to be settled.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: User has no permission to access this resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Resource does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Request method is not supported for the requested resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '408':
+          description: Request timeout.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Resource already exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '410':
+          description: Resource was permanently deleted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '415':
+          description: You are uploading an unsupported file.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Request format is correct but failed in validation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: A server or application error was encountered.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '501':
+          description: The request method you are using is not yet implemented.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '502':
+          description: The server was acting as a gateway or proxy and received an invalid response from the upstream server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: The server is unavailable at the moment.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '504':
+          description: The server was acting as a gateway or proxy and did not receive a timely response from the upstream server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '507':
+          description: Insufficient storage.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
