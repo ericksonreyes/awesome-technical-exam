@@ -32,11 +32,11 @@ COPY config/docker/config/php-cli/php.ini .
 
 WORKDIR /var/www/html
 
-COPY --from=build /var/www/html /var/www/html
-
 RUN chown -R www-data:www-data /var/www/html
 
 RUN chmod -R 0755 /var/www/html/storage
+
+COPY --from=build /var/www/html /var/www/html
 
 COPY . .
 
