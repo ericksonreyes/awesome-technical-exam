@@ -27,34 +27,13 @@ components:
       scheme: bearer
       bearerFormat: JWT
   parameters:
-    Query:
-      name: query
+    Username:
+      name: username
       in: query
-      description: Search for resources containing the search keyword.
+      description: Search for Github users matching the username provided. Can be comma separated values.
       required: false
       schema:
         type: string
-    PageNumber:
-      name: page
-      in: query
-      description: Number of items to skip before returning the results.
-      required: false
-      schema:
-        type: integer
-        format: int32
-        minimum: 1
-        default: 1
-    RecordsPerPage:
-      name: size
-      in: query
-      description: Maximum number of items to return.
-      required: false
-      schema:
-        type: integer
-        format: int32
-        minimum: 1
-        maximum: 100
-        default: 10
   schemas:
     User:
       title: Github User
@@ -367,9 +346,7 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - $ref: '#/components/parameters/PageNumber'
-        - $ref: '#/components/parameters/RecordsPerPage'
-        - $ref: '#/components/parameters/Query'
+        - $ref: '#/components/parameters/Username'
       responses:
         '200':
           description: A collection of stored resources.
