@@ -2,16 +2,36 @@
 
 namespace Acceptance;
 
-use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Behat\Context\Context;
-use Behat\Gherkin\Node\PyStringNode;
-use Behat\Gherkin\Node\TableNode;
+use Behat\Behat\Tester\Exception\PendingException;
 
 /**
  * Defines application features from the specific context.
  */
 class DomainContext implements Context
 {
+
+    /**
+     * @var string
+     */
+    private $email;
+
+    /**
+     * @var string
+     */
+    private $password;
+
+    /**
+     * @var string
+     */
+    private $passwordConfirmation;
+
+    /**
+     * @var int
+     */
+    private $minimumPasswordLength;
+
+
     /**
      * Initializes context.
      *
@@ -23,29 +43,51 @@ class DomainContext implements Context
     {
     }
 
+    /** @BeforeScenario
+     * @param $event
+     */
+    public function before($event)
+    {
+        $this->email = '';
+        $this->password = '';
+        $this->passwordConfirmation = '';
+        $this->minimumPasswordLength = 0;
+    }
 
     /**
      * @Given my e-mail is :arg1
+     * @param string $email
      */
     public function myEMailIs(string $email)
     {
-        throw new PendingException();
+        $this->email = $email;
     }
 
     /**
      * @Given my password is :arg1
+     * @param string $password
      */
     public function myPasswordIs(string $password)
     {
-        throw new PendingException();
+        $this->password = $password;
     }
 
     /**
      * @Given I confirm that my password is :arg1
+     * @param string $passwordConfirmation
      */
     public function iConfirmThatMyPasswordIs(string $passwordConfirmation)
     {
-        throw new PendingException();
+        $this->passwordConfirmation = $passwordConfirmation;
+    }
+
+    /**
+     * @Given the minimum length of the password is :arg1
+     * @param int $passwordMinimumLength
+     */
+    public function theMinimumLengthOfThePasswordIs(int $passwordMinimumLength)
+    {
+        $this->minimumPasswordLength = $passwordMinimumLength;
     }
 
     /**
@@ -100,14 +142,6 @@ class DomainContext implements Context
      * @Then my registration will be rejected because the e-mail is invalid
      */
     public function myRegistrationWillBeRejectedBecauseTheEMailIsInvalid()
-    {
-        throw new PendingException();
-    }
-
-    /**
-     * @Given the minimum length of the password is :arg1
-     */
-    public function theMinimumLengthOfThePasswordIs(int $passwordMinimumLength)
     {
         throw new PendingException();
     }
