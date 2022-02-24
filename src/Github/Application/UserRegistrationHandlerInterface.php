@@ -11,8 +11,8 @@ interface UserRegistrationHandlerInterface
 {
 
     /**
-     * @param RegisterUserCommandInterface $command
+     * @param RegisterUserCommandInterface $registerUserCommand
      */
-    public function handleThis(RegisterUserCommandInterface $command): void;
+    public function handleThis(RegisterUserCommandInterface $registerUserCommand): void;
 
 }
