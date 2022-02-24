@@ -8,6 +8,7 @@
     "ext-json": "*",
     "ext-pdo": "*",
     "ext-yaml": "*",
+    "guzzlehttp/guzzle": "^7.4",
     "laravel/lumen-framework": "8.3.*"
   },
   "require-dev": {

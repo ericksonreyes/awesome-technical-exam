@@ -23,6 +23,7 @@ class GitlabController extends Controller
     public function indexAction(Request $request): Response
     {
         try {
+            if ($request->has('username'))
             $response = [
                 '_embedded' => [
                     'users' => [
