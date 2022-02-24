@@ -13,6 +13,17 @@ use PhpSpec\ObjectBehavior;
  */
 class UserSpec extends ObjectBehavior
 {
+    /**
+     * @var string
+     */
+    private $id;
+
+    public function let() {
+        $this->beConstructedWith(
+            $this->id = md5(mt_rand())
+        );
+    }
+
 
     public function it_is_initializable()
     {

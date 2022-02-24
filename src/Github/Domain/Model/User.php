@@ -14,6 +14,11 @@ class User implements UserInterface
     /**
      * @var string
      */
+    private $id;
+
+    /**
+     * @var string
+     */
     private $username = '';
 
     /**
@@ -25,6 +30,15 @@ class User implements UserInterface
      * @var string
      */
     private $accountStatus = '';
+
+    /**
+     * User constructor.
+     * @param string $id
+     */
+    public function __construct(string $id)
+    {
+        $this->id = $id;
+    }
 
     /**
      * @return string
