@@ -25,4 +25,10 @@ interface UserRepository
      */
     public function findOneByUsernameAndPassword(string $username, $password): ?UserInterface;
 
+    /**
+     * @param string $username
+     * @return UserInterface|null
+     */
+    public function findOneByUsername(string $username): ?UserInterface;
+
 }
