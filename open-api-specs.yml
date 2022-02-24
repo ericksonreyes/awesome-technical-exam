@@ -32,6 +32,11 @@ components:
       in: query
       description: Search for Github users matching the username provided. Can be comma separated values.
       required: false
+      examples:
+        Single user:
+          value: ericksonreyes
+        Multiple users:
+          value: ericksonreyes,octocat
       schema:
         type: string
   schemas:
