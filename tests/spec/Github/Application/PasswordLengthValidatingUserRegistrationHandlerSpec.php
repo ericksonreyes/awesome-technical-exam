@@ -36,6 +36,7 @@ class PasswordLengthValidatingUserRegistrationHandlerSpec extends ObjectBehavior
     public function it_is_initializable()
     {
         $this->shouldHaveType(PasswordLengthValidatingUserRegistrationHandler::class);
+        $this->shouldHaveType(UserRegistrationHandlerInterface::class);
     }
 
     public function it_validates_password_length_and_calls_the_next_registration_handler(
