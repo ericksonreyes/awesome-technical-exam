@@ -22,6 +22,11 @@ interface GitlabUserInterface
     /**
      * @return string
      */
+    public function login(): string;
+
+    /**
+     * @return string
+     */
     public function company(): string;
 
     /**
@@ -35,7 +40,7 @@ interface GitlabUserInterface
     public function numberOfPublicRepositories(): int;
 
     /**
-     * @return int
+     * @return float
      */
-    public function avgNumberOfFollowersPerRepository(): int;
+    public function averageNumberOfFollowersPerRepository(): float;
 }

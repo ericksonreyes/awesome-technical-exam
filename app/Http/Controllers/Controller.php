@@ -23,7 +23,7 @@ class Controller extends BaseController
     protected function exception(Exception $exception): Response
     {
         $code = (new ReflectionClass($exception))->getShortName();
-        $httpCode = $exception->getCode();
+        $httpCode = $exception->getCode() >= 100 ? $exception->getCode() : 400;
         $message = $exception->getMessage();
 
         if (env('APP_DEBUG')) {

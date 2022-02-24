@@ -59,11 +59,6 @@ components:
           example: monalisa octocat
           description: Github user full name.
           readOnly: true
-        email:
-          type: string
-          example: monalisa.octocat@github.com
-          description: Github user e-mail.
-          readOnly: true
         company:
           type: string
           example: Github

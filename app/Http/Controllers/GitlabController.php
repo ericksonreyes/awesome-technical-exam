@@ -3,6 +3,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Repository\GuzzleGitlabUserRepository;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -19,35 +20,39 @@ class GitlabController extends Controller
      * @param Request $request
      * @return Response
      * @throws ReflectionException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function indexAction(Request $request): Response
     {
         try {
-            if ($request->has('username'))
+            $users = [];
+            if ($request->has('username')) {
+                $usernames = [];
+                if (trim($request->get('username')) !== '') {
+                    $usernameArray = explode(',', $request->get('username'));
+                    $usernames = array_map(function(string $username) {
+                        return trim($username);
+                    }, $usernameArray);
+                }
+
+                $gitlabUsers = (new GuzzleGitlabUserRepository())->findByUserNames($usernames);
+
+                foreach ($gitlabUsers as $gitlabUser) {
+                    $users[] = [
+                        'id' => $gitlabUser->id(),
+                        'login' => $gitlabUser->login(),
+                        'name' => $gitlabUser->name(),
+                        'company' => $gitlabUser->company(),
+                        'followers' => $gitlabUser->numberOfFollowers(),
+                        'public_repository_count' => $gitlabUser->numberOfPublicRepositories(),
+                        'average_number_of_public_repository_followers' => $gitlabUser->averageNumberOfFollowersPerRepository(),
+                    ];
+                }
+            }
+
             $response = [
                 '_embedded' => [
-                    'users' => [
-                        [
-                            "id" => 1,
-                            "login" => "octocat",
-                            "name" => "monalisa octocat",
-                            "email" => "monalisa.octocat@github.com",
-                            "company" => "Github",
-                            "followers" => 1,
-                            "public_repository_count" => 1,
-                            "average_number_of_public_repository_followers" => 12
-                        ],
-                        [
-                            "id" => 2,
-                            "login" => "ericksonreyes",
-                            "name" => "erickson reyes",
-                            "email" => "ercbluemonday@yahoo.com",
-                            "company" => "Github",
-                            "followers" => 1,
-                            "public_repository_count" => 5,
-                            "average_number_of_public_repository_followers" => 2
-                        ]
-                    ]
+                    'users' => $users
                 ]
             ];
             return \response($response, Response::HTTP_OK);
