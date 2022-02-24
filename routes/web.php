@@ -1,7 +1,4 @@
 <?php
-
-/** @var \Laravel\Lumen\Routing\Router $router */
-
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -13,6 +10,9 @@
 |
 */
 
-$router->get('/', function () use ($router) {
-    return $router->app->version();
-});
+use Laravel\Lumen\Routing\Router;
+
+/**
+ * @var $router Router
+ */
+$router->get('/', 'HomeController@indexAction');
