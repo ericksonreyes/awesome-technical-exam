@@ -7,7 +7,6 @@ suites:
     spec_path: '%paths.config%/tests'
 
 extensions:
-  DDDHelper\SpecGen\DomainCodeGenerator: ~
   LeanPHP\PhpSpec\CodeCoverage\CodeCoverageExtension:
     format:
       - html
