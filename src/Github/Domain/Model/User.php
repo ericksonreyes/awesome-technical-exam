@@ -9,7 +9,7 @@ use Github\Domain\Model\Exception\MissingUsernameException;
  * Class User
  * @package Github\Domain\Model
  */
-class User
+class User implements UserInterface
 {
     /**
      * @var string
