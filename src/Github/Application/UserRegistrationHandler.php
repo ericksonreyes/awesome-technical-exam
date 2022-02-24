@@ -2,6 +2,7 @@
 
 namespace Github\Application;
 
+use Github\Domain\Model\Exception\MismatchedPasswordsException;
 use Github\Domain\Model\User;
 use Github\Domain\Repository\UserRepository;
 
@@ -30,7 +31,17 @@ class UserRegistrationHandler implements UserRegistrationHandlerInterface
      */
     public function handleThis(RegisterUserCommandInterface $registerUserCommand): void
     {
-        $newUser = new User();
+        $id = trim($registerUserCommand->id());
+        $username = trim($registerUserCommand->username());
+        $password = trim($registerUserCommand->password());
+        $passwordConfirmation = trim($registerUserCommand->passwordConfirmation());
+
+        if ($password !== $passwordConfirmation) {
+            throw new MismatchedPasswordsException();
+        }
+
+        $newUser = new User($id);
+        $newUser->signUp($username, $password);
         $this->userRepository->store($newUser);
     }
 }
