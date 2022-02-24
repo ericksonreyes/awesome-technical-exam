@@ -17,11 +17,11 @@ use ReflectionException;
 class GitlabController extends Controller
 {
 
+    const MAXIMUM_NUMBER_OF_USERNAME_KEYWORDS = 10;
     /**
      * @param Request $request
      * @return Response
      * @throws ReflectionException
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function indexAction(Request $request): Response
     {
@@ -34,6 +34,7 @@ class GitlabController extends Controller
                     $userNames = array_map(function(string $username) {
                         return trim($username);
                     }, $usernameArray);
+                    $userNames = array_slice($userNames, 0, self::MAXIMUM_NUMBER_OF_USERNAME_KEYWORDS);
                 }
 
                 $gitlabUserRepository = new GuzzleGitlabUserRepository();
@@ -42,7 +43,6 @@ class GitlabController extends Controller
                     env('REDIS_HOST'),
                     env('REDIS_CACHE_LIFETIME_IN_SECONDS')
                 );
-
 
                 $gitlabUsers = $cachedGitlabUserRepository->findByUserNames($userNames);
                 foreach ($gitlabUsers as $gitlabUser) {

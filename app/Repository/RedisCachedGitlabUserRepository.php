@@ -66,9 +66,9 @@ class RedisCachedGitlabUserRepository implements GitlabUserRepository
 
         $unCachedGitlabUsers = $this->gitlabUserRepository->findByUserNames($unCachedUserNames);
         foreach ($unCachedGitlabUsers as $unCachedGitlabUser) {
+            $this->store($unCachedGitlabUser);
             $unCachedGitlabUser->setSourceRepository('Github');
             $gitlabUsers[$unCachedGitlabUser->login()] = $unCachedGitlabUser;
-            $this->store($unCachedGitlabUser);
         }
 
         ksort($gitlabUsers);
