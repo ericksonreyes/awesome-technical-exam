@@ -2,6 +2,9 @@
 
 namespace Github\Domain\Model;
 
+use Github\Domain\Model\Exception\MissingPasswordException;
+use Github\Domain\Model\Exception\MissingUsernameException;
+
 /**
  * Class User
  * @package Github\Domain\Model
@@ -53,6 +56,14 @@ class User
      */
     public function signUp(string $username, string $password): void
     {
+        if (trim($username) === '') {
+            throw new MissingUsernameException();
+        }
+
+        if (trim($password) === '') {
+            throw new MissingPasswordException();
+        }
+
         $this->username = $username;
         $this->password = $password;
         $this->accountStatus = UserInterface::ACCOUNT_STATUS_ACTIVE;

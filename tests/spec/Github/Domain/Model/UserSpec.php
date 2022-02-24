@@ -2,6 +2,8 @@
 
 namespace spec\Github\Domain\Model;
 
+use Github\Domain\Model\Exception\MissingPasswordException;
+use Github\Domain\Model\Exception\MissingUsernameException;
 use Github\Domain\Model\User;
 use PhpSpec\ObjectBehavior;
 
@@ -41,5 +43,39 @@ class UserSpec extends ObjectBehavior
         $this->username()->shouldReturn($username);
         $this->password()->shouldReturn($password);
         $this->accountStatus()->shouldReturn('Active');
+    }
+
+    public function it_requires_a_username_when_signing_up() {
+        $emptyUsername = $this->makeEmptyString();
+        $password = 'SecuredPassword';
+
+        $this->shouldThrow(MissingUsernameException::class)->during(
+            'signUp',
+            [
+                $emptyUsername,
+                $password
+            ]
+        );
+    }
+
+    public function it_requires_a_password_when_signing_up() {
+        $username = 'ericksonreyes';
+        $emptyPassword = $this->makeEmptyString();
+        $password = 'SecuredPassword';
+
+        $this->shouldThrow(MissingPasswordException::class)->during(
+            'signUp',
+            [
+                $username,
+                $emptyPassword
+            ]
+        );
+    }
+
+    /**
+     * @return string
+     */
+    private function makeEmptyString(): string {
+        return str_repeat(' ', mt_rand(0, 5));
     }
 }
