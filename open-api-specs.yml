@@ -68,10 +68,15 @@ components:
           example: 1
           description: Total number of followers.
           readOnly: true
-        avg_followers_per_repository:
+        public_repository_count:
+          type: integer
+          example: 1
+          description: Total number of public repositories.
+          readOnly: true
+        average_number_of_public_repository_followers:
           type: integer
           example: 12
-          description: Average number of followers per repository.
+          description: Average number of followers per public repository.
           readOnly: true
     Error:
       type: object
