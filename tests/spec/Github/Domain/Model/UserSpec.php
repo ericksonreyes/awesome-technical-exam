@@ -30,6 +30,11 @@ class UserSpec extends ObjectBehavior
         $this->shouldHaveType(User::class);
     }
 
+    public function it_has_an_identifier()
+    {
+        $this->id()->shouldBeString();
+    }
+
     public function it_has_a_username()
     {
         $this->username()->shouldBeString();

@@ -2,14 +2,34 @@
 
 namespace Acceptance;
 
+use Acceptance\Mock\MockUserRepository;
+use Acceptance\Mock\RegisterUserCommand;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Tester\Exception\PendingException;
+use Exception;
+use Github\Application\EmailFormatValidatingUserRegistrationHandler;
+use Github\Application\PasswordLengthValidatingUserRegistrationHandler;
+use Github\Application\UserRegistrationHandler;
+use Github\Application\UserRegistrationHandlerInterface;
+use Github\Domain\Model\Exception\DuplicateUsernameException;
+use Github\Domain\Model\Exception\InvalidEmailException;
+use Github\Domain\Model\Exception\MismatchedPasswordsException;
+use Github\Domain\Model\Exception\MissingEmailException;
+use Github\Domain\Model\Exception\MissingPasswordException;
+use Github\Domain\Model\Exception\MissingUsernameException;
+use Github\Domain\Model\Exception\PasswordTooShortException;
+use Github\Domain\Model\UserInterface;
+use Github\Domain\Repository\UserRepository;
 
 /**
  * Defines application features from the specific context.
  */
 class DomainContext implements Context
 {
+    /**
+     * @var string
+     */
+    private $id;
 
     /**
      * @var string
@@ -27,10 +47,24 @@ class DomainContext implements Context
     private $passwordConfirmation;
 
     /**
-     * @var int
+     * @var UserRepository
      */
-    private $minimumPasswordLength;
+    private $userRepository;
 
+    /**
+     * @var UserRegistrationHandlerInterface
+     */
+    private $userRegistrationHandler;
+
+    /**
+     * @var Exception
+     */
+    private $encounteredException;
+
+    /**
+     * @var UserRegistrationHandlerInterface[]
+     */
+    private $handlerValidationClasses = [];
 
     /**
      * Initializes context.
@@ -48,10 +82,19 @@ class DomainContext implements Context
      */
     public function before($event)
     {
+        $this->id = md5(mt_rand(1, 1000));
         $this->email = '';
         $this->password = '';
         $this->passwordConfirmation = '';
-        $this->minimumPasswordLength = 0;
+        $this->encounteredException = null;
+        $this->userRegistrationHandler = [];
+        $this->userRepository = new MockUserRepository();
+
+        $userRegistrationHandler = new UserRegistrationHandler($this->userRepository);
+        $emailValidatingUserRegistrationHandler = new EmailFormatValidatingUserRegistrationHandler(
+            $userRegistrationHandler
+        );
+        $this->userRegistrationHandler = $emailValidatingUserRegistrationHandler;
     }
 
     /**
@@ -87,7 +130,10 @@ class DomainContext implements Context
      */
     public function theMinimumLengthOfThePasswordIs(int $passwordMinimumLength)
     {
-        $this->minimumPasswordLength = $passwordMinimumLength;
+        $this->userRegistrationHandler = new PasswordLengthValidatingUserRegistrationHandler(
+            $this->userRegistrationHandler,
+            $passwordMinimumLength
+        );
     }
 
     /**
@@ -95,7 +141,17 @@ class DomainContext implements Context
      */
     public function iSubmitMyRegistrationInformation()
     {
-        throw new PendingException();
+        $registerUserCommand = (new RegisterUserCommand())
+            ->setId($this->id)
+            ->setUsername($this->email)
+            ->setPassword($this->password)
+            ->setPasswordConfirmation($this->passwordConfirmation);
+
+        try {
+            $this->userRegistrationHandler->handleThis($registerUserCommand);
+        } catch (Exception $exception) {
+            $this->encounteredException = $exception;
+        }
     }
 
     /**
@@ -103,7 +159,11 @@ class DomainContext implements Context
      */
     public function myRegistrationWillBeAccepted()
     {
-        throw new PendingException();
+        $newUser = $this->userRepository->findOneByUsername($this->email);
+        assert(
+            $newUser instanceof UserInterface,
+            'User was not registered. When it should have been.'
+        );
     }
 
     /**
@@ -111,7 +171,10 @@ class DomainContext implements Context
      */
     public function myRegistrationWillBeRejectedBecauseTheEMailWasLeftBlank()
     {
-        throw new PendingException();
+        assert(
+            $this->encounteredException instanceof MissingEmailException,
+            'Empty email was accepted. When it should not be.'
+        );
     }
 
     /**
@@ -119,7 +182,10 @@ class DomainContext implements Context
      */
     public function myRegistrationWillBeRejectedBecauseThePasswordsWereLeftBlank()
     {
-        throw new PendingException();
+        assert(
+            $this->encounteredException instanceof MissingPasswordException,
+            'Empty password was accepted.'
+        );
     }
 
     /**
@@ -127,7 +193,18 @@ class DomainContext implements Context
      */
     public function iTryToRegisterUsingTheSameEMailAgain()
     {
-        throw new PendingException();
+        $registerUserCommand = (new RegisterUserCommand())
+            ->setId($this->id)
+            ->setUsername($this->email)
+            ->setPassword($this->password)
+            ->setPasswordConfirmation($this->passwordConfirmation);
+
+        try {
+            $this->userRegistrationHandler->handleThis($registerUserCommand);
+            $this->userRegistrationHandler->handleThis($registerUserCommand);
+        } catch (Exception $exception) {
+            $this->encounteredException = $exception;
+        }
     }
 
     /**
@@ -135,7 +212,10 @@ class DomainContext implements Context
      */
     public function myRegistrationWillBeRejectedBecauseTheEMailIsAlreadyUsed()
     {
-        throw new PendingException();
+        assert(
+            $this->encounteredException instanceof DuplicateUsernameException,
+            'Duplicate email was accepted. When it should not be.'
+        );
     }
 
     /**
@@ -143,7 +223,10 @@ class DomainContext implements Context
      */
     public function myRegistrationWillBeRejectedBecauseTheEMailIsInvalid()
     {
-        throw new PendingException();
+        assert(
+            $this->encounteredException instanceof InvalidEmailException,
+            'Invalid e-mail was accepted. When it should not be.'
+        );
     }
 
     /**
@@ -151,7 +234,10 @@ class DomainContext implements Context
      */
     public function myRegistrationWillBeRejected()
     {
-        throw new PendingException();
+        assert(
+            $this->encounteredException instanceof Exception,
+            'Registration was accepted. When it should not be.'
+        );
     }
 
     /**
@@ -159,7 +245,10 @@ class DomainContext implements Context
      */
     public function iWillBeInformedThatThePasswordIsProvidedIsTooShort()
     {
-        throw new PendingException();
+        assert(
+            $this->encounteredException instanceof PasswordTooShortException,
+            'Short password was accepted. When it should not be.'
+        );
     }
 
     /**
@@ -167,6 +256,9 @@ class DomainContext implements Context
      */
     public function myRegistrationWillBeRejectedBecauseThePasswordDoesNotMatch()
     {
-        throw new PendingException();
+        assert(
+            $this->encounteredException instanceof MismatchedPasswordsException,
+            'Mismatched passwords was accepted. When it should not be.'
+        );
     }
 }

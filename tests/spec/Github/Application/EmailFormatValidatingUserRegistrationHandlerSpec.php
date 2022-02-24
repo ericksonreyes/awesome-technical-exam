@@ -7,6 +7,7 @@ use Github\Application\PasswordLengthValidatingUserRegistrationHandler;
 use Github\Application\RegisterUserCommandInterface;
 use Github\Application\UserRegistrationHandlerInterface;
 use Github\Domain\Model\Exception\InvalidEmailException;
+use Github\Domain\Model\Exception\MissingEmailException;
 use PhpSpec\ObjectBehavior;
 
 class EmailFormatValidatingUserRegistrationHandlerSpec extends ObjectBehavior
@@ -39,10 +40,26 @@ class EmailFormatValidatingUserRegistrationHandlerSpec extends ObjectBehavior
         $this->handleThis($registerUserCommand)->shouldBeNull();
     }
 
+    public function it_rejects_empty_email_addresses(
+        RegisterUserCommandInterface $registerUserCommand
+    ) {
+        $emptyEmailAddress = str_repeat(' ', mt_rand(0, 5));
+        $registerUserCommand->username()->shouldBeCalled()->willReturn($emptyEmailAddress);
+
+        $this->userRegistrationHandler->handleThis($registerUserCommand)->shouldNotBeCalled();
+
+        $this->shouldThrow(MissingEmailException::class)->during(
+            'handleThis',
+            [
+                $registerUserCommand
+            ]
+        );
+    }
+
     public function it_rejects_invalid_email_addresses(
         RegisterUserCommandInterface $registerUserCommand
     ) {
-        $invalidEmailAddresses = ['', '@email', 'erickson@', 'erickson@mail'];
+        $invalidEmailAddresses = ['@email', 'erickson@', 'erickson@mail'];
 
         foreach ($invalidEmailAddresses as $invalidEmailAddress) {
             $registerUserCommand->username()->shouldBeCalled()->willReturn($invalidEmailAddress);

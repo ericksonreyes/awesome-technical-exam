@@ -16,7 +16,7 @@ interface UserRepository
      * @param UserInterface $user
      * @return mixed
      */
-    public function store(UserInterface $user);
+    public function store(UserInterface $user): void;
 
     /**
      * @param string $username

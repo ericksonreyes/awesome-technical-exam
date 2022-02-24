@@ -43,6 +43,14 @@ class User implements UserInterface
     /**
      * @return string
      */
+    public function id(): string
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return string
+     */
     public function username(): string
     {
         return $this->username;

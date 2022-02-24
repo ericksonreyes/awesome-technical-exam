@@ -3,6 +3,7 @@
 namespace Github\Application;
 
 use Github\Domain\Model\Exception\InvalidEmailException;
+use Github\Domain\Model\Exception\MissingEmailException;
 
 /**
  * Class EmailFormatValidatingUserRegistrationHandler
@@ -29,7 +30,12 @@ class EmailFormatValidatingUserRegistrationHandler implements UserRegistrationHa
      */
     public function handleThis(RegisterUserCommandInterface $registerUserCommand): void
     {
-        $email = $registerUserCommand->username();
+        $email = trim($registerUserCommand->username());
+
+        if (trim($email) === '') {
+            throw new MissingEmailException();
+        }
+
         if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
             throw new InvalidEmailException('Incorrect e-mail address format.');
         }

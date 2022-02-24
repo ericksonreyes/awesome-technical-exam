@@ -14,6 +14,11 @@ interface UserInterface
     /**
      * @return string
      */
+    public function id(): string;
+
+    /**
+     * @return string
+     */
     public function username(): string;
 
     /**
