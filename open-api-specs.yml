@@ -78,6 +78,11 @@ components:
           example: 12
           description: Average number of followers per public repository.
           readOnly: true
+        origin_repository:
+          type: string
+          example: Cache
+          description: Indicates if the record is from Cache or from Github
+          readOnly: true
     Error:
       type: object
       properties:

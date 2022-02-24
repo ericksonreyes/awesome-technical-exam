@@ -43,6 +43,11 @@ class GitlabUser implements GitlabUserInterface
     private $numberOfPublicRepositories;
 
     /**
+     * @var string
+     */
+    private $sourceRepository = '';
+
+    /**
      * @param int $id
      * @return GitlabUser
      */
@@ -103,6 +108,16 @@ class GitlabUser implements GitlabUserInterface
     }
 
     /**
+     * @param string $sourceRepository
+     * @return GitlabUser
+     */
+    public function setSourceRepository(string $sourceRepository): GitlabUser
+    {
+        $this->sourceRepository = $sourceRepository;
+        return $this;
+    }
+
+    /**
      * @return int
      */
     public function id(): int
@@ -159,6 +174,14 @@ class GitlabUser implements GitlabUserInterface
             return 0;
         }
         return ceil($this->numberOfFollowers() / $this->numberOfPublicRepositories());
+    }
+
+    /**
+     * @return string
+     */
+    public function sourceRepository(): string
+    {
+        return $this->sourceRepository;
     }
 
 }

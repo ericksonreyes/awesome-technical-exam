@@ -36,7 +36,11 @@ class GuzzleGitlabUserRepository implements DomainGitlabUserRepository
     {
         $gitlabUsers = [];
         foreach ($userNames as $userName) {
-            $response = $this->guzzle->get("https://api.github.com/users/{$userName}");
+            $response = $this->guzzle->get(
+                "https://api.github.com/users/{$userName}",
+                ['http_errors' => false]
+            );
+
             if ($response->getStatusCode() === Response::HTTP_OK) {
                 $body = json_decode($response->getBody(), true);
                 $gitlabUsers[$body['login']] = (new GitlabUser())
@@ -45,8 +49,7 @@ class GuzzleGitlabUserRepository implements DomainGitlabUserRepository
                     ->setName($body['name'] ?? '')
                     ->setCompany($body['company'] ?? '')
                     ->setNumberOfFollowers($body['followers'])
-                    ->setNumberOfPublicRepositories($body['public_repos'])
-                ;
+                    ->setNumberOfPublicRepositories($body['public_repos']);
             }
         }
         ksort($gitlabUsers);

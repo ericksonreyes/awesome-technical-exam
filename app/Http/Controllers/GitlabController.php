@@ -4,6 +4,7 @@
 namespace App\Http\Controllers;
 
 use App\Repository\GuzzleGitlabUserRepository;
+use App\Repository\RedisCachedGitlabUserRepository;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -27,16 +28,23 @@ class GitlabController extends Controller
         try {
             $users = [];
             if ($request->has('username')) {
-                $usernames = [];
+                $userNames = [];
                 if (trim($request->get('username')) !== '') {
                     $usernameArray = explode(',', $request->get('username'));
-                    $usernames = array_map(function(string $username) {
+                    $userNames = array_map(function(string $username) {
                         return trim($username);
                     }, $usernameArray);
                 }
 
-                $gitlabUsers = (new GuzzleGitlabUserRepository())->findByUserNames($usernames);
+                $gitlabUserRepository = new GuzzleGitlabUserRepository();
+                $cachedGitlabUserRepository = new RedisCachedGitlabUserRepository(
+                    $gitlabUserRepository,
+                    env('REDIS_HOST'),
+                    env('REDIS_CACHE_LIFETIME_IN_SECONDS')
+                );
 
+
+                $gitlabUsers = $cachedGitlabUserRepository->findByUserNames($userNames);
                 foreach ($gitlabUsers as $gitlabUser) {
                     $users[] = [
                         'id' => $gitlabUser->id(),
@@ -45,7 +53,9 @@ class GitlabController extends Controller
                         'company' => $gitlabUser->company(),
                         'followers' => $gitlabUser->numberOfFollowers(),
                         'public_repository_count' => $gitlabUser->numberOfPublicRepositories(),
-                        'average_number_of_public_repository_followers' => $gitlabUser->averageNumberOfFollowersPerRepository(),
+                        'average_number_of_public_repository_followers' =>
+                            $gitlabUser->averageNumberOfFollowersPerRepository(),
+                        'origin_repository' => $gitlabUser->sourceRepository()
                     ];
                 }
             }
