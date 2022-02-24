@@ -11,4 +11,6 @@ use InvalidArgumentException;
 class MissingEmailException extends InvalidArgumentException
 {
     protected $message = 'E-mail address is required.';
+
+    protected $code = 400;
 }

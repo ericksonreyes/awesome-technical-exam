@@ -2,7 +2,7 @@
 
 namespace Github\Domain\Model\Exception;
 
-use Github\Shared\Exception\ConflictException;
+use Github\Shared\Exceptions\ConflictException;
 
 /**
  * Class DuplicateUsernameException

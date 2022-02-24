@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Github\Shared\Exception;
+namespace Github\Shared\Exceptions;
 
 
 use InvalidArgumentException;
@@ -12,5 +12,5 @@ use InvalidArgumentException;
  */
 abstract class ConflictException extends InvalidArgumentException
 {
-
+    protected $code = 409;
 }

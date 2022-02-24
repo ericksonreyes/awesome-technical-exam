@@ -11,4 +11,6 @@ use InvalidArgumentException;
 class MissingPasswordException extends InvalidArgumentException
 {
     protected $message = 'Password is required.';
+
+    protected $code = 400;
 }

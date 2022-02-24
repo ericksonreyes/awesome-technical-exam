@@ -10,6 +10,7 @@ use InvalidArgumentException;
  */
 class InvalidEmailException extends InvalidArgumentException
 {
-
     protected $message = 'Invalid e-mail address format.';
+
+    protected $code = 400;
 }

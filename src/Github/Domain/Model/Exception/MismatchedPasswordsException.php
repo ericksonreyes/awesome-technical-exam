@@ -11,4 +11,6 @@ use InvalidArgumentException;
 class MismatchedPasswordsException extends InvalidArgumentException
 {
     protected $message = 'Passwords does not match.';
+
+    protected $code = 400;
 }

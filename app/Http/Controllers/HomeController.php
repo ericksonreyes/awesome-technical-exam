@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use Exception;
+use Github\Domain\Model\Exception\DuplicateUsernameException;
 use Illuminate\Http\Response;
+use ReflectionException;
 
 /**
  * Class HomeController
@@ -12,6 +14,10 @@ use Illuminate\Http\Response;
 class HomeController extends Controller
 {
 
+    /**
+     * @return Response
+     * @throws ReflectionException
+     */
     public function indexAction(): Response {
         try {
             $response = [
@@ -28,7 +34,7 @@ class HomeController extends Controller
             return \response($response, Response::HTTP_OK);
         }
         catch (Exception $exception) {
-
+            return $this->exception($exception);
         }
     }
 }

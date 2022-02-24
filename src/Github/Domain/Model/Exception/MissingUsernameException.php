@@ -11,4 +11,6 @@ use InvalidArgumentException;
 class MissingUsernameException extends InvalidArgumentException
 {
     protected $message = 'Username is required.';
+
+    protected $code = 400;
 }

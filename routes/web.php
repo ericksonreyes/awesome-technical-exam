@@ -16,3 +16,4 @@ use Laravel\Lumen\Routing\Router;
  * @var $router Router
  */
 $router->get('/', 'HomeController@indexAction');
+$router->get('/v1/api/users', 'GitlabController@indexAction');

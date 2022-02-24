@@ -3,7 +3,7 @@
 namespace spec\Github\Domain\Model\Exception;
 
 use Github\Domain\Model\Exception\DuplicateUsernameException;
-use Github\Shared\Exception\ConflictException;
+use Github\Shared\Exceptions\ConflictException;
 use InvalidArgumentException;
 use PhpSpec\ObjectBehavior;
 

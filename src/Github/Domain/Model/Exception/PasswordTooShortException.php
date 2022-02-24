@@ -11,4 +11,6 @@ use InvalidArgumentException;
 class PasswordTooShortException extends InvalidArgumentException
 {
     protected $message = 'Password is too short.';
+
+    protected $code = 400;
 }
