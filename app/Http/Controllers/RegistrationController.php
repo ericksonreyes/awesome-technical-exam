@@ -40,6 +40,7 @@ class RegistrationController extends Controller
             $registerUserCommandHandler = new UserRegistrationHandler($userRepository);
             $registerUserCommandHandler->handleThis($registerUserCommand);
 
+            $issuer = env('JWT_ISSUER');
             $accessTokenLifeInSeconds = env('JWT_TOKEN_LIFETIME');
             $secretKey = env('JWT_SECRET_KEY');
             $timeIssued = time();
@@ -47,7 +48,7 @@ class RegistrationController extends Controller
             $payload = [
                 'sub' => $id,
                 'username' => $username,
-                'iss' => 'http://awesome-technical-exam.com',
+                'iss' => $issuer,
                 'iat' => $timeIssued,
                 'exp' => $expiresOn
             ];
