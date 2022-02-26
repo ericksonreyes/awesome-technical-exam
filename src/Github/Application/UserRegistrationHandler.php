@@ -8,6 +8,7 @@ use Github\Domain\Model\Exception\MissingEmailException;
 use Github\Domain\Model\Exception\MissingPasswordException;
 use Github\Domain\Model\Exception\MissingUsernameException;
 use Github\Domain\Model\User;
+use Github\Domain\Model\UserAttributesInterface;
 use Github\Domain\Model\UserInterface;
 use Github\Domain\Repository\UserRepository;
 
@@ -52,7 +53,7 @@ class UserRegistrationHandler extends UserAuthenticationAwareHandler implements 
             throw new MismatchedPasswordsException('Passwords does not match.');
         }
 
-        if ($this->usernameIsAlreadyUsed($email)) {
+        if ($this->emailIsAlreadyUsed($email)) {
             throw new EmailAlreadyUsedException('Username is already registered.');
         }
 
@@ -63,11 +64,12 @@ class UserRegistrationHandler extends UserAuthenticationAwareHandler implements 
     }
 
     /**
-     * @param string $username
+     * @param string $email
      * @return bool
      */
-    protected function usernameIsAlreadyUsed(string $username): bool
+    protected function emailIsAlreadyUsed(string $email): bool
     {
-        return $this->userRepository->findOneByUsername($username) instanceof UserInterface;
+        return $this->userRepository->findOneByEmail($email) instanceof UserInterface ||
+            $this->userRepository->findOneByEmail($email) instanceof UserAttributesInterface;
     }
 }

@@ -60,7 +60,7 @@ class UserAuthenticationHandlerSpec extends ObjectBehavior
         $anExistingUser->password()->shouldBeCalled()->willReturn($encryptedPassword);
 
         $this->passwordEncryptionService->encrypt($password)->shouldBeCalled()->willReturn($encryptedPassword);
-        $this->userRepository->findOneByUsername($username)->shouldBeCalled()->willReturn($anExistingUser);
+        $this->userRepository->findOneByEmail($username)->shouldBeCalled()->willReturn($anExistingUser);
         $this->handleThis($authenticateUserCommand)->shouldBeNull();
     }
 
@@ -110,7 +110,7 @@ class UserAuthenticationHandlerSpec extends ObjectBehavior
         $authenticateUserCommand->password()->shouldBeCalled()->willReturn($password);
         $anExistingUser->password()->shouldBeCalled()->willReturn($encryptedPassword);
 
-        $this->userRepository->findOneByUsername($username)->shouldBeCalled()->willReturn($anExistingUser);
+        $this->userRepository->findOneByEmail($username)->shouldBeCalled()->willReturn($anExistingUser);
         $this->passwordEncryptionService->encrypt($password)->shouldBeCalled()->willReturn($encryptedIncorrectPassword);
         $this->shouldThrow(IncorrectPasswordException::class)->during(
             'handleThis',
@@ -129,7 +129,7 @@ class UserAuthenticationHandlerSpec extends ObjectBehavior
         $authenticateUserCommand->username()->shouldBeCalled()->willReturn($username);
         $authenticateUserCommand->password()->shouldBeCalled()->willReturn($password);
 
-        $this->userRepository->findOneByUsername($username)->shouldBeCalled()->willReturn(null);
+        $this->userRepository->findOneByEmail($username)->shouldBeCalled()->willReturn(null);
         $this->shouldThrow(UserNotFoundException::class)->during(
             'handleThis',
             [

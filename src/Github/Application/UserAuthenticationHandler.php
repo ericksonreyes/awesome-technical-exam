@@ -45,7 +45,7 @@ class UserAuthenticationHandler extends UserAuthenticationAwareHandler implement
             throw new MissingPasswordException();
         }
 
-        $anExistingUser = $this->userRepository->findOneByUsername($username);
+        $anExistingUser = $this->userRepository->findOneByEmail($username);
         if ($anExistingUser instanceof UserInterface === false) {
             throw new UserNotFoundException();
         }

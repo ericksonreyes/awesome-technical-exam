@@ -220,7 +220,7 @@ class DomainContext implements Context
      */
     public function myRegistrationWillBeAccepted()
     {
-        $newUser = $this->userRepository->findOneByUsername($this->email);
+        $newUser = $this->userRepository->findOneByEmail($this->email);
         assert(
             $newUser instanceof UserInterface,
             'User was not registered. When it should have been.'

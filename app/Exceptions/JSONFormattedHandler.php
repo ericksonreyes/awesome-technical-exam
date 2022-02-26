@@ -1,17 +1,16 @@
 <?php
 
-
 namespace App\Exceptions;
-
 
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\ValidationException;
 use Laravel\Lumen\Exceptions\Handler as ExceptionHandler;
+use ReflectionClass;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Throwable;
 
-class Handler extends ExceptionHandler
+class JSONFormattedHandler extends ExceptionHandler
 {
     /**
      * A list of the exception types that should not be reported.
@@ -51,6 +50,38 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
-        return parent::render($request, $exception);
+        $code = (new ReflectionClass($exception))->getShortName();
+        $httpCode = $exception->getCode() >= 100 && $exception->getCode() < 600 ? $exception->getCode() : 500;
+        $message = trim($exception->getMessage()) !== '' ? $exception->getMessage() : $code;
+
+        if (env('APP_DEBUG')) {
+            return \response(
+                [
+                    '_error' => [
+                        'code' => $code,
+                        'message' => $message,
+                        'file' => $exception->getFile(),
+                        'line' => $exception->getLine(),
+                    ]
+                ],
+                $httpCode,
+                [
+                    'Cache-Control' => 'no-store'
+                ]
+            );
+        }
+
+        return \response(
+            [
+                '_error' => [
+                    'code' => $code,
+                    'message' => $exception->getMessage()
+                ]
+            ],
+            $httpCode,
+            [
+                'Cache-Control' => 'no-store'
+            ]
+        );
     }
 }

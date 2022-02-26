@@ -4,8 +4,8 @@
 namespace App\Http\Controllers;
 
 use App\Commands\AuthenticateUserCommand;
+use App\Models\UserModel;
 use App\Repository\FirebaseJSONWebTokenGenerator;
-use App\Repository\UserRepository;
 use App\Services\Md5UserPasswordEncryptionService;
 use Exception;
 use Github\Application\UserAuthenticationHandler;
@@ -32,7 +32,7 @@ class AuthenticationController extends Controller
 
             $authenticateUserCommand = new AuthenticateUserCommand($email, $password);
 
-            $userRepository = new UserRepository();
+            $userRepository = new UserModel();
             $passwordEncryptionService = new Md5UserPasswordEncryptionService();
             $userAuthenticationHandler = new UserAuthenticationHandler($userRepository, $passwordEncryptionService);
             $userAuthenticationHandler->handleThis($authenticateUserCommand);
@@ -43,7 +43,7 @@ class AuthenticationController extends Controller
             $timeIssued = time();
             $expiresOn = $timeIssued + $accessTokenLifeInSeconds;
             $payload = [
-                'sub' => $userRepository->findOneByUsername($email)->id(),
+                'sub' => $userRepository->findOneByEmail($email)->id(),
                 'email' => $email,
                 'iss' => $issuer,
                 'iat' => $timeIssued,

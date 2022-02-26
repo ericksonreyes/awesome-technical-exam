@@ -4,11 +4,14 @@
 namespace App\Http\Controllers;
 
 use App\Commands\RegisterUser;
+use App\Models\UserModel;
 use App\Repository\FirebaseJSONWebTokenGenerator;
 use App\Repository\UserRepository;
 use App\Services\Md5UserPasswordEncryptionService;
 use App\Services\TimeAndMd5BasedUniqueIdentifierGenerator;
 use Exception;
+use Github\Application\EmailFormatValidatingUserRegistrationHandler;
+use Github\Application\PasswordLengthValidatingUserRegistrationHandler;
 use Github\Application\UserRegistrationHandler;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -37,10 +40,18 @@ class RegistrationController extends Controller
             $registerUserCommand = (new RegisterUser($id, $email, $password))
                 ->withPasswordConfirmation($passwordConfirmation);
 
-            $userRepository = new UserRepository();
+            $userRepository = new UserModel();
             $passwordEncryptionService = new Md5UserPasswordEncryptionService();
             $registerUserCommandHandler = new UserRegistrationHandler($userRepository, $passwordEncryptionService);
-            $registerUserCommandHandler->handleThis($registerUserCommand);
+            $emailFormatValidatingUserRegistrationHandler = new EmailFormatValidatingUserRegistrationHandler(
+                $registerUserCommandHandler
+            );
+            $passwordLengthValidatingUserRegistrationHandler = new PasswordLengthValidatingUserRegistrationHandler(
+                $emailFormatValidatingUserRegistrationHandler,
+                8
+            );
+
+            $passwordLengthValidatingUserRegistrationHandler->handleThis($registerUserCommand);
 
             $issuer = env('JWT_ISSUER');
             $accessTokenLifeInSeconds = env('JWT_TOKEN_LIFETIME');

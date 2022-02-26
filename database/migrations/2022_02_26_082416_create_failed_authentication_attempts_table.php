@@ -18,8 +18,8 @@ class CreateFailedAuthenticationAttemptsTable extends Migration
             $table->id();
             $table->string('email', 255);
             $table->longText('headers');
-            $table->index(['email', FailedUserAuthenticationAttemptModel::CREATED_AT], 'idx_email_created_at');
-            $table->timestamps();
+            $table->bigInteger('attemptedOn');
+            $table->index(['email', 'attemptedOn'],'idx_email_attemptedOn');
         });
     }
 

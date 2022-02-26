@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use DateTime;
+use Exception;
 use Github\Domain\Model\UserAttributesInterface;
 use Github\Domain\Model\UserInterface;
 use Github\Domain\Repository\UserRepository;
@@ -17,10 +18,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $email
  * @property string $password
  * @property string $status
- * @property DateTime $created_at
- * @property DateTime $updated_at
+ * @property DateTime $createdOn
+ * @property DateTime $lastUpdatedOn
  */
-class User extends Model implements UserRepository
+class UserModel extends Model implements UserRepository
 {
 
     public const TABLE_NAME = 'users';
@@ -39,31 +40,53 @@ class User extends Model implements UserRepository
     }
 
     /**
+     * @var bool
+     */
+    public $timestamps = false;
+
+    /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = [
+        'createdOn',
+        'lastUpdatedOn'
+    ];
+
+    /**
      * @param UserInterface $user
-     * @return mixed
+     * @throws Exception
      */
     public function store(UserInterface $user): void
     {
-        $newUser = new self();
-        $newUser->guid = $user->id();
-        $newUser->email = $user->email();
-        $newUser->password = $user->password();
-        $newUser->status = $user->accountStatus();
-        $newUser->save();
+        $userModel = UserModel::where('email', $user->email())->first();
+
+        if ($userModel instanceof UserModel === false) {
+            $userModel = new self();
+            $userModel->createdOn = new DateTime();
+        }
+
+        $userModel->guid = $user->id();
+        $userModel->email = $user->email();
+        $userModel->password = $user->password();
+        $userModel->status = $user->accountStatus();
+        $userModel->lastUpdatedOn = new DateTime();
+        $userModel->save();
     }
 
     /**
-     * @param string $username
+     * @param string $email
      * @param $password
      * @return UserInterface|null
      */
-    public function findOneByUsernameAndPassword(string $username, $password): ?UserAttributesInterface
+    public function findOneByEmailAndPassword(string $email, $password): ?UserAttributesInterface
     {
-        $existingUser = User::where('email', $username)
+        $existingUser = UserModel::where('email', $email)
             ->where('password', $password)
             ->first();
 
-        if ($existingUser instanceof User) {
+        if ($existingUser instanceof UserModel) {
             return (new UserDTO())
                 ->setId($existingUser->guid)
                 ->setUsername($existingUser->email)
@@ -75,14 +98,14 @@ class User extends Model implements UserRepository
     }
 
     /**
-     * @param string $username
+     * @param string $email
      * @return UserInterface|null
      */
-    public function findOneByUsername(string $username): ?UserAttributesInterface
+    public function findOneByEmail(string $email): ?UserAttributesInterface
     {
-        $existingUser = User::where('email', $username)->first();
+        $existingUser = UserModel::where('email', $email)->first();
 
-        if ($existingUser instanceof User) {
+        if ($existingUser instanceof UserModel) {
             return (new UserDTO())
                 ->setId($existingUser->guid)
                 ->setUsername($existingUser->email)

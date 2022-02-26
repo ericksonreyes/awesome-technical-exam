@@ -56,7 +56,7 @@ class UserRegistrationHandlerSpec extends ObjectBehavior
         $command->password()->shouldBeCalled()->willReturn('SecuredPassword');
         $command->passwordConfirmation()->shouldBeCalled()->willReturn('SecuredPassword');
 
-        $this->userRepository->findOneByUsername('erickson@reyes.com')
+        $this->userRepository->findOneByEmail('erickson@reyes.com')
             ->shouldBeCalled()
             ->willReturn(null);
         $this->userRepository->store(Argument::type(UserInterface::class))->shouldBeCalled();
@@ -110,7 +110,7 @@ class UserRegistrationHandlerSpec extends ObjectBehavior
         $command->password()->shouldBeCalled()->willReturn('SecuredPassword');
         $command->passwordConfirmation()->shouldBeCalled()->willReturn('SecuredPassword');
 
-        $this->userRepository->findOneByUsername('erickson@reyes.com')
+        $this->userRepository->findOneByEmail('erickson@reyes.com')
             ->shouldBeCalled()
             ->willReturn($anExistingUser);
 

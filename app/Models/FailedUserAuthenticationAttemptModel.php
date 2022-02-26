@@ -14,13 +14,26 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $id
  * @property string $email
  * @property string $headers
- * @property DateTime $created_at
- * @property DateTime $updated_at
+ * @property DateTime $attemptedOn
  */
 class FailedUserAuthenticationAttemptModel extends Model
 {
 
     public const TABLE_NAME = 'failed_authentication_attempts';
+
+    /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = [
+        'attemptedOn'
+    ];
+
+    /**
+     * @var bool
+     */
+    public $timestamps = false;
 
     /**
      * @var string

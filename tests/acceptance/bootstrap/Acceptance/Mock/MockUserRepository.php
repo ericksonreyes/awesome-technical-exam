@@ -40,14 +40,14 @@ class MockUserRepository implements UserRepository
     }
 
     /**
-     * @param string $username
+     * @param string $email
      * @param $password
      * @return UserInterface|null
      */
-    public function findOneByUsernameAndPassword(string $username, $password): ?UserAttributesInterface
+    public function findOneByEmailAndPassword(string $email, $password): ?UserAttributesInterface
     {
         foreach ($this->users as $user) {
-            if ($user->email() === $username && $user->password() === $password) {
+            if ($user->email() === $email && $user->password() === $password) {
                 return $user;
             }
         }
@@ -55,13 +55,13 @@ class MockUserRepository implements UserRepository
     }
 
     /**
-     * @param string $username
+     * @param string $email
      * @return UserInterface|null
      */
-    public function findOneByUsername(string $username): ?UserAttributesInterface
+    public function findOneByEmail(string $email): ?UserAttributesInterface
     {
         foreach ($this->users as $user) {
-            if ($user->email() === $username) {
+            if ($user->email() === $email) {
                 return $user;
             }
         }
