@@ -1,8 +1,12 @@
 <?php
 
+use App\Http\Middleware\PreFlightResponse;
 use App\Http\Middleware\PreventCachingMiddleware;
+use App\Http\Middleware\JWTAuthenticationMiddleware;
+use Nord\Lumen\Cors\CorsMiddleware;
+use Nord\Lumen\Cors\CorsServiceProvider;
 
-require_once __DIR__.'/../vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 (new Laravel\Lumen\Bootstrap\LoadEnvironmentVariables(
     dirname(__DIR__)
@@ -75,12 +79,14 @@ $app->configure('app');
 */
 
 $app->middleware([
-     PreventCachingMiddleware::class
+    CorsMiddleware::class,
+    PreFlightResponse::class,
+    PreventCachingMiddleware::class
 ]);
 
- $app->routeMiddleware([
-     'auth' => App\Http\Middleware\JWTAuthenticationMiddleware::class,
- ]);
+$app->routeMiddleware([
+    'auth' => JWTAuthenticationMiddleware::class,
+]);
 
 /*
 |--------------------------------------------------------------------------
@@ -93,6 +99,7 @@ $app->middleware([
 |
 */
 
+ $app->register(CorsServiceProvider::class);
 // $app->register(App\Providers\AppServiceProvider::class);
 // $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
@@ -111,7 +118,7 @@ $app->middleware([
 $app->router->group([
     'namespace' => 'App\Http\Controllers',
 ], function ($router) {
-    require __DIR__.'/../routes/web.php';
+    require __DIR__ . '/../routes/web.php';
 });
 
 return $app;

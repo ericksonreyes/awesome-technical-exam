@@ -11,6 +11,7 @@
     "firebase/php-jwt": "^6.0",
     "guzzlehttp/guzzle": "^7.4",
     "laravel/lumen-framework": "8.3.*",
+    "nordsoftware/lumen-cors": "3.4.*",
     "predis/predis": "^1.1"
   },
   "require-dev": {

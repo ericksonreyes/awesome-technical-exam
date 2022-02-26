@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e2a60f40cdb0e6b4d6382ba35922e4a3",
+    "content-hash": "0c68b4b61a2856465018d504aefbf0dc",
     "packages": [
         {
             "name": "brick/math",
@@ -2643,6 +2643,70 @@
             "time": "2018-02-13T20:26:39+00:00"
         },
         {
+            "name": "nordsoftware/lumen-cors",
+            "version": "3.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/digiaonline/lumen-cors.git",
+                "reference": "79f3cf9e802e222fa326d483e919363470414d6d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/digiaonline/lumen-cors/zipball/79f3cf9e802e222fa326d483e919363470414d6d",
+                "reference": "79f3cf9e802e222fa326d483e919363470414d6d",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "^5.4 || ^6.0 || ^7.0 || ^8.0",
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "codeception/assert-throws": "^1.1",
+                "codeception/codeception": "^4.1",
+                "codeception/module-asserts": "^1.3",
+                "codeception/specify": "^1.2",
+                "codeception/verify": "^1.2",
+                "laravel/lumen-framework": "^5.4 || ^6.0 || ^7.0 || ^8.0",
+                "php-coveralls/php-coveralls": "^2.2",
+                "phpstan/phpstan": "^0.12.2",
+                "phpstan/phpstan-symfony": "^0.12.11"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Nord\\Lumen\\Cors\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Christoffer Niska",
+                    "email": "christofferniska@gmail.com"
+                }
+            ],
+            "description": "CORS module for the Lumen PHP framework.",
+            "keywords": [
+                "cors",
+                "cross-origin",
+                "headers",
+                "http",
+                "laravel",
+                "lumen",
+                "preflight",
+                "request",
+                "resource",
+                "sharing"
+            ],
+            "support": {
+                "issues": "https://github.com/digiaonline/lumen-cors/issues",
+                "source": "https://github.com/digiaonline/lumen-cors/tree/3.4.0"
+            },
+            "time": "2021-02-08T10:39:40+00:00"
+        },
+        {
             "name": "opis/closure",
             "version": "3.6.3",
             "source": {
@@ -4190,12 +4254,12 @@
                 }
             },
             "autoload": {
-                "psr-4": {
-                    "Symfony\\Polyfill\\Ctype\\": ""
-                },
                 "files": [
                     "bootstrap.php"
-                ]
+                ],
+                "psr-4": {
+                    "Symfony\\Polyfill\\Ctype\\": ""
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -5066,12 +5130,12 @@
             },
             "type": "library",
             "autoload": {
-                "psr-4": {
-                    "Symfony\\Component\\String\\": ""
-                },
                 "files": [
                     "Resources/functions.php"
                 ],
+                "psr-4": {
+                    "Symfony\\Component\\String\\": ""
+                },
                 "exclude-from-classmap": [
                     "/Tests/"
                 ]
@@ -5866,16 +5930,16 @@
         },
         {
             "name": "composer/xdebug-handler",
-            "version": "2.0.4",
+            "version": "2.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/xdebug-handler.git",
-                "reference": "0c1a3925ec58a4ec98e992b9c7d171e9e184be0a"
+                "reference": "9e36aeed4616366d2b690bdce11f71e9178c579a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/xdebug-handler/zipball/0c1a3925ec58a4ec98e992b9c7d171e9e184be0a",
-                "reference": "0c1a3925ec58a4ec98e992b9c7d171e9e184be0a",
+                "url": "https://api.github.com/repos/composer/xdebug-handler/zipball/9e36aeed4616366d2b690bdce11f71e9178c579a",
+                "reference": "9e36aeed4616366d2b690bdce11f71e9178c579a",
                 "shasum": ""
             },
             "require": {
@@ -5912,7 +5976,7 @@
             "support": {
                 "irc": "irc://irc.freenode.org/composer",
                 "issues": "https://github.com/composer/xdebug-handler/issues",
-                "source": "https://github.com/composer/xdebug-handler/tree/2.0.4"
+                "source": "https://github.com/composer/xdebug-handler/tree/2.0.5"
             },
             "funding": [
                 {
@@ -5928,7 +5992,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-01-04T17:06:45+00:00"
+            "time": "2022-02-24T20:20:32+00:00"
         },
         {
             "name": "doctrine/instantiator",
