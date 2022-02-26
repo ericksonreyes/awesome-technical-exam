@@ -5,8 +5,7 @@ namespace App\Http\Controllers;
 
 use App\Commands\RegisterUser;
 use App\Models\UserModel;
-use App\Repository\FirebaseJSONWebTokenGenerator;
-use App\Repository\UserRepository;
+use App\Services\FirebaseJSONWebTokenGenerator;
 use App\Services\Md5UserPasswordEncryptionService;
 use App\Services\TimeAndMd5BasedUniqueIdentifierGenerator;
 use Exception;

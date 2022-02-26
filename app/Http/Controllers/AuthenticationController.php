@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 
 use App\Commands\AuthenticateUserCommand;
 use App\Models\UserModel;
-use App\Repository\FirebaseJSONWebTokenGenerator;
+use App\Services\FirebaseJSONWebTokenGenerator;
 use App\Services\Md5UserPasswordEncryptionService;
 use Exception;
 use Github\Application\UserAuthenticationHandler;
@@ -40,6 +40,7 @@ class AuthenticationController extends Controller
             $issuer = env('JWT_ISSUER');
             $accessTokenLifeInSeconds = env('JWT_TOKEN_LIFETIME');
             $secretKey = env('JWT_SECRET_KEY');
+            $encryptionMethod = env('JWT_ENCRYPTION_METHOD');
             $timeIssued = time();
             $expiresOn = $timeIssued + $accessTokenLifeInSeconds;
             $payload = [
@@ -50,7 +51,7 @@ class AuthenticationController extends Controller
                 'exp' => $expiresOn
             ];
 
-            $jwtGenerator = new FirebaseJSONWebTokenGenerator($secretKey);
+            $jwtGenerator = (new FirebaseJSONWebTokenGenerator($secretKey))->setEncryptionMethod($encryptionMethod);
             $accessToken = $jwtGenerator->generate($payload);
             $tokenType = 'bearer';
             $expiresIn = $timeIssued + $accessTokenLifeInSeconds;

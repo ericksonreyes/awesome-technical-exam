@@ -16,6 +16,10 @@ use Laravel\Lumen\Routing\Router;
  * @var $router Router
  */
 $router->get('/', 'HomeController@indexAction');
-$router->get('/v1/api/users', 'GitlabController@indexAction');
+
 $router->post('/v1/api/registration', 'RegistrationController@createAction');
 $router->post('/v1/api/access_token', 'AuthenticationController@createAction');
+
+$router->group(['middleware' => 'auth'], function () use ($router) {
+    $router->get('/v1/api/users', 'GitlabController@indexAction');
+});
