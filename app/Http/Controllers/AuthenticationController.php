@@ -27,10 +27,10 @@ class AuthenticationController extends Controller
     public function createAction(Request $request): Response
     {
         try {
-            $username = $request->get('username') ?? '';
+            $email = $request->get('email') ?? '';
             $password = $request->get('password') ?? '';
 
-            $authenticateUserCommand = new AuthenticateUserCommand($username, $password);
+            $authenticateUserCommand = new AuthenticateUserCommand($email, $password);
 
             $userRepository = new UserRepository();
             $passwordEncryptionService = new Md5UserPasswordEncryptionService();
@@ -43,8 +43,8 @@ class AuthenticationController extends Controller
             $timeIssued = time();
             $expiresOn = $timeIssued + $accessTokenLifeInSeconds;
             $payload = [
-                'sub' => $userRepository->findOneByUsername($username)->id(),
-                'username' => $username,
+                'sub' => $userRepository->findOneByUsername($email)->id(),
+                'email' => $email,
                 'iss' => $issuer,
                 'iat' => $timeIssued,
                 'exp' => $expiresOn

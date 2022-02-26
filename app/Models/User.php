@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property int $id
  * @property string $guid
- * @property string $username
+ * @property string $email
  * @property string $password
  * @property string $status
  * @property DateTime $created_at
@@ -46,7 +46,7 @@ class User extends Model implements UserRepository
     {
         $newUser = new self();
         $newUser->guid = $user->id();
-        $newUser->username = $user->email();
+        $newUser->email = $user->email();
         $newUser->password = $user->password();
         $newUser->status = $user->accountStatus();
         $newUser->save();
@@ -59,14 +59,14 @@ class User extends Model implements UserRepository
      */
     public function findOneByUsernameAndPassword(string $username, $password): ?UserAttributesInterface
     {
-        $existingUser = User::where('username', $username)
+        $existingUser = User::where('email', $username)
             ->where('password', $password)
             ->first();
 
         if ($existingUser instanceof User) {
             return (new UserDTO())
                 ->setId($existingUser->guid)
-                ->setUsername($existingUser->username)
+                ->setUsername($existingUser->email)
                 ->setPassword($existingUser->password)
                 ->setAccountStatus($existingUser->status)
                 ;
@@ -80,12 +80,12 @@ class User extends Model implements UserRepository
      */
     public function findOneByUsername(string $username): ?UserAttributesInterface
     {
-        $existingUser = User::where('username', $username)->first();
+        $existingUser = User::where('email', $username)->first();
 
         if ($existingUser instanceof User) {
             return (new UserDTO())
                 ->setId($existingUser->guid)
-                ->setUsername($existingUser->username)
+                ->setUsername($existingUser->email)
                 ->setPassword($existingUser->password)
                 ->setAccountStatus($existingUser->status)
                 ;

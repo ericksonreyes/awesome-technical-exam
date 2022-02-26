@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use App\Commands\RegisterUser;
 use App\Repository\FirebaseJSONWebTokenGenerator;
 use App\Repository\UserRepository;
+use App\Services\Md5UserPasswordEncryptionService;
 use App\Services\TimeAndMd5BasedUniqueIdentifierGenerator;
 use Exception;
 use Github\Application\UserRegistrationHandler;
@@ -29,15 +30,16 @@ class RegistrationController extends Controller
     {
         try {
             $id = (new TimeAndMd5BasedUniqueIdentifierGenerator())->generate('user-');
-            $username = $request->get('email') ?? '';
+            $email = $request->get('email') ?? '';
             $password = $request->get('password') ?? '';
             $passwordConfirmation = $request->get('passwordConfirmation') ?? '';
 
-            $registerUserCommand = (new RegisterUser($id, $username, $password))
+            $registerUserCommand = (new RegisterUser($id, $email, $password))
                 ->withPasswordConfirmation($passwordConfirmation);
 
             $userRepository = new UserRepository();
-            $registerUserCommandHandler = new UserRegistrationHandler($userRepository);
+            $passwordEncryptionService = new Md5UserPasswordEncryptionService();
+            $registerUserCommandHandler = new UserRegistrationHandler($userRepository, $passwordEncryptionService);
             $registerUserCommandHandler->handleThis($registerUserCommand);
 
             $issuer = env('JWT_ISSUER');
@@ -47,7 +49,7 @@ class RegistrationController extends Controller
             $expiresOn = $timeIssued + $accessTokenLifeInSeconds;
             $payload = [
                 'sub' => $id,
-                'username' => $username,
+                'email' => $email,
                 'iss' => $issuer,
                 'iat' => $timeIssued,
                 'exp' => $expiresOn

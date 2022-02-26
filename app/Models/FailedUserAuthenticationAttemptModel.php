@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  * @package App\Models
  *
  * @property string $id
- * @property string $username
+ * @property string $email
  * @property string $headers
  * @property DateTime $created_at
  * @property DateTime $updated_at
