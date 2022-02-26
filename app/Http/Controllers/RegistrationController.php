@@ -4,6 +4,7 @@
 namespace App\Http\Controllers;
 
 use App\Commands\RegisterUser;
+use App\Repository\FirebaseJSONWebTokenGenerator;
 use App\Repository\UserRepository;
 use App\Services\TimeAndMd5BasedUniqueIdentifierGenerator;
 use Exception;
@@ -40,9 +41,21 @@ class RegistrationController extends Controller
             $registerUserCommandHandler->handleThis($registerUserCommand);
 
             $accessTokenLifeInSeconds = env('ACCESS_TOKEN_LIFETIME');
-            $accessToken = '';
-            $tokenType = 'Bearer';
-            $expiresIn = time() + $accessTokenLifeInSeconds;
+            $timeIssued = time();
+            $expiresOn = $timeIssued + $accessTokenLifeInSeconds;
+            $payload = [
+                'sub' => $id,
+                'username' => $username,
+                'iss' => 'http://awesome-technical-exam.com',
+                'iat' => $timeIssued,
+                'exp' => $expiresOn
+            ];
+            $secretKey = 'erickson';
+
+            $jwtGenerator = new FirebaseJSONWebTokenGenerator($secretKey);
+            $accessToken = $jwtGenerator->generate($payload);
+            $tokenType = 'bearer';
+            $expiresIn = $timeIssued + $accessTokenLifeInSeconds;
 
             $response = [
                 'id' => $id,
