@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 
 use App\Repository\GuzzleGitlabUserRepository;
 use App\Repository\RedisCachedGitlabUserRepository;
+use App\Services\EloquentAwareSearchHistoryService;
+use DateTimeImmutable;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -28,9 +30,10 @@ class GitlabController extends Controller
         try {
             $users = [];
             if ($request->has('username')) {
+                $searchString = trim($request->get('username'));
                 $userNames = [];
-                if (trim($request->get('username')) !== '') {
-                    $usernameArray = explode(',', $request->get('username'));
+                if ($searchString !== '') {
+                    $usernameArray = explode(',', $searchString);
                     $userNames = array_map(function(string $username) {
                         return trim($username);
                     }, $usernameArray);
@@ -43,8 +46,17 @@ class GitlabController extends Controller
                     env('REDIS_HOST'),
                     env('REDIS_CACHE_LIFETIME_IN_SECONDS')
                 );
+                $searchHistoryService = new EloquentAwareSearchHistoryService();
 
+                $searchStartTime = microtime(true);
                 $gitlabUsers = $cachedGitlabUserRepository->findByUserNames($userNames);
+
+                $email = $request->get('accessTokenPayload')['email'];
+                $resultCount = count($gitlabUsers);
+                $searchedOn = new DateTimeImmutable();
+                $searchSpeed = microtime(true) - $searchStartTime;
+                $searchHistoryService->record($email,$searchString, $searchedOn, $resultCount, $searchSpeed);
+
                 foreach ($gitlabUsers as $gitlabUser) {
                     $users[] = [
                         'id' => $gitlabUser->id(),

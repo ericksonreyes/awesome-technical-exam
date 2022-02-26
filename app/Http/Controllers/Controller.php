@@ -7,6 +7,7 @@ use Illuminate\Http\Response;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use ReflectionClass;
 use ReflectionException;
+use Throwable;
 
 /**
  * Class Controller
@@ -23,7 +24,7 @@ class Controller extends BaseController
     protected function exception(Exception $exception): Response
     {
         $code = (new ReflectionClass($exception))->getShortName();
-        $httpCode = $exception->getCode() >= 100 && $exception->getCode() < 600 ? $exception->getCode() : 500;
+        $httpCode = $this->getStatusCode($exception);
         $message = trim($exception->getMessage()) !== '' ? $exception->getMessage() : $code;
 
         if (env('APP_DEBUG')) {
@@ -55,5 +56,16 @@ class Controller extends BaseController
                 'Cache-Control' => 'no-store'
             ]
         );
+    }
+
+    /**
+     * @param Throwable $exception
+     * @return int
+     */
+    private function getStatusCode(Throwable $exception): int {
+        if (is_integer($exception->getCode()) === false) {
+            return 500;
+        }
+        return $exception->getCode() >= 100 && $exception->getCode() < 600 ? $exception->getCode() : 500;
     }
 }

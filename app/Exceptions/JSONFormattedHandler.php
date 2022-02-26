@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\ValidationException;
@@ -51,7 +52,7 @@ class JSONFormattedHandler extends ExceptionHandler
     public function render($request, Throwable $exception)
     {
         $code = (new ReflectionClass($exception))->getShortName();
-        $httpCode = $exception->getCode() >= 100 && $exception->getCode() < 600 ? $exception->getCode() : 500;
+        $httpCode = $this->getStatusCode($exception);
         $message = trim($exception->getMessage()) !== '' ? $exception->getMessage() : $code;
 
         if (env('APP_DEBUG')) {
@@ -83,5 +84,16 @@ class JSONFormattedHandler extends ExceptionHandler
                 'Cache-Control' => 'no-store'
             ]
         );
+    }
+
+    /**
+     * @param Throwable $exception
+     * @return int
+     */
+    private function getStatusCode(Throwable $exception): int {
+        if (is_integer($exception->getCode()) === false) {
+            return 500;
+        }
+        return $exception->getCode() >= 100 && $exception->getCode() < 600 ? $exception->getCode() : 500;
     }
 }
