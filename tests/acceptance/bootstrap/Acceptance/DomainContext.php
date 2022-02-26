@@ -2,13 +2,12 @@
 
 namespace Acceptance;
 
-use Acceptance\Mock\MockFailedUserAuthenticationLogger;
 use Acceptance\Mock\MockAuthenticateUserCommand;
+use Acceptance\Mock\MockFailedUserAuthenticationLogger;
 use Acceptance\Mock\MockUserPasswordEncryptionService;
 use Acceptance\Mock\MockUserRepository;
 use Acceptance\Mock\RegisterUserCommand;
 use Behat\Behat\Context\Context;
-use Behat\Behat\Tester\Exception\PendingException;
 use Exception;
 use Github\Application\EmailFormatValidatingUserRegistrationHandler;
 use Github\Application\FailedAuthenticationAttemptVerifyingUserAuthenticationHandler;
@@ -23,12 +22,12 @@ use Github\Domain\Model\Exception\InvalidEmailException;
 use Github\Domain\Model\Exception\MismatchedPasswordsException;
 use Github\Domain\Model\Exception\MissingEmailException;
 use Github\Domain\Model\Exception\MissingPasswordException;
-use Github\Domain\Model\Exception\MissingUsernameException;
 use Github\Domain\Model\Exception\PasswordTooShortException;
 use Github\Domain\Model\Exception\TooManyFailedAuthenticationAttemptsException;
 use Github\Domain\Model\Exception\UserNotFoundException;
 use Github\Domain\Model\UserInterface;
 use Github\Domain\Repository\UserRepository;
+use Github\Shared\HammingDistanceCalculator;
 
 /**
  * Defines application features from the specific context.
@@ -86,6 +85,21 @@ class DomainContext implements Context
     private $allowedLoginAttempts = 0;
 
     /**
+     * @var int
+     */
+    private $hammingDistanceCalculationFirstNumber = 0;
+
+    /**
+     * @var int
+     */
+    private $hammingDistanceCalculationSecondNumber = 0;
+
+    /**
+     * @var int
+     */
+    private $hammingDistanceCalculationResult = 0;
+
+    /**
      * Initializes context.
      *
      * Every scenario gets its own context instance.
@@ -123,6 +137,10 @@ class DomainContext implements Context
             $this->userRepository,
             $this->userPasswordEncryptionService
         );
+
+        $this->hammingDistanceCalculationFirstNumber = 0;
+        $this->hammingDistanceCalculationSecondNumber = 0;
+        $this->hammingDistanceCalculationResult = 0;
     }
 
     /**
@@ -391,6 +409,49 @@ class DomainContext implements Context
         assert(
             $this->encounteredException instanceof MissingPasswordException,
             'Empty password was accepted. When it should not be.'
+        );
+    }
+
+    /**
+     * @Given first integer is :arg1
+     * @param int $firstNumber
+     */
+    public function firstIntegerIs(int $firstNumber)
+    {
+        $this->hammingDistanceCalculationFirstNumber = $firstNumber;
+    }
+
+    /**
+     * @Given the second integer is :arg1
+     * @param int $secondNumber
+     */
+    public function theSecondIntegerIs(int $secondNumber)
+    {
+        $this->hammingDistanceCalculationSecondNumber = $secondNumber;
+    }
+
+    /**
+     * @When the hamming distance is calculated
+     */
+    public function theHammingDistanceIsCalculated()
+    {
+        $hammingDistanceCalculator = new HammingDistanceCalculator();
+        $this->hammingDistanceCalculationResult = $hammingDistanceCalculator->calculate(
+            $this->hammingDistanceCalculationFirstNumber,
+            $this->hammingDistanceCalculationSecondNumber
+        );
+    }
+
+    /**
+     * @Then the answer will be :arg1
+     * @param int $expectedCorrectAnswer
+     */
+    public function theAnswerWillBe(int $expectedCorrectAnswer)
+    {
+        $actualResult = $this->hammingDistanceCalculationResult;
+        assert(
+            $this->hammingDistanceCalculationResult === $expectedCorrectAnswer,
+            "The expected answer is {$expectedCorrectAnswer} but the actual result is {$actualResult}"
         );
     }
 }
