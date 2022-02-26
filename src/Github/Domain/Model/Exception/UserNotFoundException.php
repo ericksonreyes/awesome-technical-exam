@@ -12,5 +12,5 @@ class UserNotFoundException extends InvalidArgumentException
 {
     protected $message = 'Unregistered user.';
 
-    protected $code = 400;
+    protected $code = 404;
 }
