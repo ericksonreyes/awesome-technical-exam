@@ -261,4 +261,44 @@ class DomainContext implements Context
             'Mismatched passwords was accepted. When it should not be.'
         );
     }
+
+    /**
+     * @When I try to login
+     */
+    public function iTryToLogin()
+    {
+        throw new PendingException();
+    }
+
+    /**
+     * @Then I will be allowed access
+     */
+    public function iWillBeAllowedAccess()
+    {
+        throw new PendingException();
+    }
+
+    /**
+     * @Then I will be denied access because of incorrect password
+     */
+    public function iWillBeDeniedAccessBecauseOfIncorrectPassword()
+    {
+        throw new PendingException();
+    }
+
+    /**
+     * @Then I will be denied access because I am not a registered user
+     */
+    public function iWillBeDeniedAccessBecauseIAmNotARegisteredUser()
+    {
+        throw new PendingException();
+    }
+
+    /**
+     * @Then I will be blocked because of multiple failed login attempts
+     */
+    public function iWillBeBlockedBecauseOfMultipleFailedLoginAttempts()
+    {
+        throw new PendingException();
+    }
 }

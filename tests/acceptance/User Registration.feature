@@ -1,7 +1,7 @@
 Feature: User registration
   As a software developer
   I want to be able register online
-  So that I can log in and be able to use the features of the API
+  So I will be a registered user and be able to use the features of the API
 
 
   Scenario Outline: Successful registration.
