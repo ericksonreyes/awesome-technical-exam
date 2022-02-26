@@ -16,9 +16,9 @@ class CreateFailedAuthenticationAttemptsTable extends Migration
     {
         Schema::create(FailedUserAuthenticationAttemptModel::TABLE_NAME, function (Blueprint $table) {
             $table->id();
-            $table->string('email', 150);
+            $table->string('email', 255);
             $table->longText('headers');
-            $table->index(['username', FailedUserAuthenticationAttemptModel::CREATED_AT], 'idx_username_created_at');
+            $table->index(['email', FailedUserAuthenticationAttemptModel::CREATED_AT], 'idx_email_created_at');
             $table->timestamps();
         });
     }
