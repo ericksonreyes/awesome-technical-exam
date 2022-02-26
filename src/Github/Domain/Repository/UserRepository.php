@@ -3,6 +3,7 @@
 
 namespace Github\Domain\Repository;
 
+use Github\Domain\Model\UserAttributesInterface;
 use Github\Domain\Model\UserInterface;
 
 /**
@@ -23,12 +24,12 @@ interface UserRepository
      * @param $password
      * @return UserInterface|null
      */
-    public function findOneByUsernameAndPassword(string $username, $password): ?UserInterface;
+    public function findOneByUsernameAndPassword(string $username, $password): ?UserAttributesInterface;
 
     /**
      * @param string $username
      * @return UserInterface|null
      */
-    public function findOneByUsername(string $username): ?UserInterface;
+    public function findOneByUsername(string $username): ?UserAttributesInterface;
 
 }

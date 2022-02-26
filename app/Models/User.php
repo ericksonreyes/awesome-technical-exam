@@ -2,32 +2,96 @@
 
 namespace App\Models;
 
-use Illuminate\Auth\Authenticatable;
-use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
-use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use DateTime;
+use Github\Domain\Model\UserAttributesInterface;
+use Github\Domain\Model\UserInterface;
+use Github\Domain\Repository\UserRepository;
 use Illuminate\Database\Eloquent\Model;
-use Laravel\Lumen\Auth\Authorizable;
 
-class User extends Model implements AuthenticatableContract, AuthorizableContract
+/**
+ * Class User
+ * @package App\Models
+ *
+ * @property int $id
+ * @property string $guid
+ * @property string $username
+ * @property string $password
+ * @property string $status
+ * @property DateTime $created_at
+ * @property DateTime $updated_at
+ */
+class User extends Model implements UserRepository
 {
-    use Authenticatable, Authorizable, HasFactory;
+
+    public const TABLE_NAME = 'users';
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var string[]
+     * @var string
      */
-    protected $fillable = [
-        'name', 'email',
-    ];
+    protected $table = self::TABLE_NAME;
 
     /**
-     * The attributes excluded from the model's JSON form.
-     *
-     * @var string[]
+     * @return string
      */
-    protected $hidden = [
-        'password',
-    ];
+    public function getDateFormat(): string
+    {
+        return 'U';
+    }
+
+    /**
+     * @param UserInterface $user
+     * @return mixed
+     */
+    public function store(UserInterface $user): void
+    {
+        $newUser = new self();
+        $newUser->guid = $user->id();
+        $newUser->username = $user->username();
+        $newUser->password = $user->password();
+        $newUser->status = $user->accountStatus();
+        $newUser->save();
+    }
+
+    /**
+     * @param string $username
+     * @param $password
+     * @return UserInterface|null
+     */
+    public function findOneByUsernameAndPassword(string $username, $password): ?UserAttributesInterface
+    {
+        $existingUser = User::where('username', $username)
+            ->where('password', $password)
+            ->first();
+
+        if ($existingUser instanceof User) {
+            return (new UserDTO())
+                ->setId($existingUser->guid)
+                ->setUsername($existingUser->username)
+                ->setPassword($existingUser->password)
+                ->setAccountStatus($existingUser->status)
+                ;
+        }
+        return null;
+    }
+
+    /**
+     * @param string $username
+     * @return UserInterface|null
+     */
+    public function findOneByUsername(string $username): ?UserAttributesInterface
+    {
+        $existingUser = User::where('username', $username)->first();
+
+        if ($existingUser instanceof User) {
+            return (new UserDTO())
+                ->setId($existingUser->guid)
+                ->setUsername($existingUser->username)
+                ->setPassword($existingUser->password)
+                ->setAccountStatus($existingUser->status)
+                ;
+        }
+        return null;
+    }
+
+
 }

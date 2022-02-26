@@ -1,11 +1,11 @@
 <?php
 
-use App\Models\FailedUserAuthenticationAttemptModel;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateFailedAuthenticationAttemptsTable extends Migration
+class CreateUsersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,11 +14,13 @@ class CreateFailedAuthenticationAttemptsTable extends Migration
      */
     public function up()
     {
-        Schema::create(FailedUserAuthenticationAttemptModel::TABLE_NAME, function (Blueprint $table) {
+        Schema::create(User::TABLE_NAME, function (Blueprint $table) {
             $table->id();
+            $table->string('guid', 255);
             $table->string('username', 150);
-            $table->longText('headers');
-            $table->index(['username', FailedUserAuthenticationAttemptModel::CREATED_AT], 'idx_username_created_at');
+            $table->string('password', 255);
+            $table->string('status', 150);
+            $table->index(['username', 'password'], 'idx_username_password');
             $table->timestamps();
         });
     }
@@ -30,6 +32,6 @@ class CreateFailedAuthenticationAttemptsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists(FailedUserAuthenticationAttemptModel::TABLE_NAME);
+        Schema::dropIfExists(User::TABLE_NAME);
     }
 }

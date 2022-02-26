@@ -7,29 +7,9 @@ namespace Github\Domain\Model;
  * Interface UserInterface
  * @package Github\Domain\Model
  */
-interface UserInterface
+interface UserInterface extends UserAttributesInterface
 {
     public const ACCOUNT_STATUS_ACTIVE = 'Active';
-
-    /**
-     * @return string
-     */
-    public function id(): string;
-
-    /**
-     * @return string
-     */
-    public function username(): string;
-
-    /**
-     * @return string
-     */
-    public function password(): string;
-
-    /**
-     * @return string
-     */
-    public function accountStatus(): string;
 
     /**
      * @param string $username
