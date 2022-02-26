@@ -3,9 +3,10 @@
 namespace Github\Application;
 
 use Github\Domain\Model\Exception\IncorrectPasswordException;
+use Github\Domain\Model\Exception\MissingPasswordException;
+use Github\Domain\Model\Exception\MissingUsernameException;
 use Github\Domain\Model\Exception\UserNotFoundException;
 use Github\Domain\Model\UserInterface;
-use Github\Domain\Repository\UserRepository;
 
 class UserAuthenticationHandler extends UserAuthenticationAwareHandler implements UserAuthenticationHandlerInterface
 {
@@ -14,8 +15,16 @@ class UserAuthenticationHandler extends UserAuthenticationAwareHandler implement
      */
     public function handleThis(AuthenticateUserCommandInterface $authenticateUserCommand): void
     {
-        $username = $authenticateUserCommand->username();
-        $password = $authenticateUserCommand->password();
+        $username = trim($authenticateUserCommand->username());
+        $password = trim($authenticateUserCommand->password());
+
+        if ($username === '') {
+            throw new MissingUsernameException();
+        }
+
+        if ($password === '') {
+            throw new MissingPasswordException();
+        }
 
         $anExistingUser = $this->userRepository->findOneByUsername($username);
         if ($anExistingUser instanceof UserInterface === false) {

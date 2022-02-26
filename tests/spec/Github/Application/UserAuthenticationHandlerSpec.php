@@ -7,6 +7,8 @@ use Github\Application\UserAuthenticationHandler;
 use Github\Application\UserAuthenticationHandlerInterface;
 use Github\Application\UserPasswordEncryptionServiceInterface;
 use Github\Domain\Model\Exception\IncorrectPasswordException;
+use Github\Domain\Model\Exception\MissingPasswordException;
+use Github\Domain\Model\Exception\MissingUsernameException;
 use Github\Domain\Model\Exception\UserNotFoundException;
 use Github\Domain\Model\UserInterface;
 use Github\Domain\Repository\UserRepository;
@@ -60,6 +62,38 @@ class UserAuthenticationHandlerSpec extends ObjectBehavior
         $this->passwordEncryptionService->encrypt($password)->shouldBeCalled()->willReturn($encryptedPassword);
         $this->userRepository->findOneByUsername($username)->shouldBeCalled()->willReturn($anExistingUser);
         $this->handleThis($authenticateUserCommand)->shouldBeNull();
+    }
+
+    public function it_requires_a_username(AuthenticateUserCommandInterface $authenticateUserCommand) {
+        $emptyUserNames = ['', ' ', '     '];
+        $password = 'SecuredPassword';
+
+        foreach ($emptyUserNames as $emptyUsername) {
+            $authenticateUserCommand->username()->shouldBeCalled()->willReturn($emptyUsername);
+            $authenticateUserCommand->password()->shouldBeCalled()->willReturn($password);
+            $this->shouldThrow(MissingUsernameException::class)->during(
+                'handleThis',
+                [
+                    $authenticateUserCommand
+                ]
+            );
+        }
+    }
+
+    public function it_requires_a_password(AuthenticateUserCommandInterface $authenticateUserCommand) {
+        $username = 'erickson';
+        $emptyPasswords = ['', ' ', '     '];
+
+        foreach ($emptyPasswords as $emptyPassword) {
+            $authenticateUserCommand->username()->shouldBeCalled()->willReturn($username);
+            $authenticateUserCommand->password()->shouldBeCalled()->willReturn($emptyPassword);
+            $this->shouldThrow(MissingPasswordException::class)->during(
+                'handleThis',
+                [
+                    $authenticateUserCommand
+                ]
+            );
+        }
     }
 
     public function it_rejects_incorrect_passwords(

@@ -4,6 +4,8 @@ namespace Github\Application;
 
 use Github\Domain\Model\Exception\DuplicateUsernameException;
 use Github\Domain\Model\Exception\MismatchedPasswordsException;
+use Github\Domain\Model\Exception\MissingPasswordException;
+use Github\Domain\Model\Exception\MissingUsernameException;
 use Github\Domain\Model\User;
 use Github\Domain\Model\UserInterface;
 use Github\Domain\Repository\UserRepository;
@@ -23,6 +25,14 @@ class UserRegistrationHandler extends UserAuthenticationAwareHandler implements 
         $username = trim($registerUserCommand->username());
         $password = trim($registerUserCommand->password());
         $passwordConfirmation = trim($registerUserCommand->passwordConfirmation());
+
+        if ($username === '') {
+            throw new MissingUsernameException();
+        }
+
+        if ($password === '') {
+            throw new MissingPasswordException();
+        }
 
         if ($password !== $passwordConfirmation) {
             throw new MismatchedPasswordsException('Passwords does not match.');

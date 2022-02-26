@@ -8,6 +8,8 @@ use Github\Application\UserRegistrationHandler;
 use Github\Application\UserRegistrationHandlerInterface;
 use Github\Domain\Model\Exception\DuplicateUsernameException;
 use Github\Domain\Model\Exception\MismatchedPasswordsException;
+use Github\Domain\Model\Exception\MissingPasswordException;
+use Github\Domain\Model\Exception\MissingUsernameException;
 use Github\Domain\Model\UserInterface;
 use Github\Domain\Repository\UserRepository;
 use PhpSpec\ObjectBehavior;
@@ -32,7 +34,8 @@ class UserRegistrationHandlerSpec extends ObjectBehavior
     public function let(
         UserRepository $userRepository,
         UserPasswordEncryptionServiceInterface $passwordEncryptionService
-    ) {
+    )
+    {
         $this->beConstructedWith(
             $this->userRepository = $userRepository,
             $this->passwordEncryptionService = $passwordEncryptionService
@@ -61,6 +64,42 @@ class UserRegistrationHandlerSpec extends ObjectBehavior
             ->willReturn('EncryptedSecuredPassword');
 
         $this->handleThis($command)->shouldBeNull();
+    }
+
+    public function it_requires_a_username(RegisterUserCommandInterface $command)
+    {
+        $command->id()->shouldBeCalled()->willReturn('user-1');
+        $command->password()->shouldBeCalled()->willReturn('SecuredPassword');
+        $command->passwordConfirmation()->shouldBeCalled()->willReturn('SecuredPassword');
+
+        $emptyUserNames = ['', ' ', '     '];
+        foreach ($emptyUserNames as $emptyUserName) {
+            $command->username()->shouldBeCalled()->willReturn($emptyUserName);
+            $this->shouldThrow(MissingUsernameException::class)->during(
+                'handleThis',
+                [
+                    $command
+                ]
+            );
+        }
+    }
+
+    public function it_requires_a_password(RegisterUserCommandInterface $command)
+    {
+        $command->id()->shouldBeCalled()->willReturn('user-1');
+        $command->username()->shouldBeCalled()->willReturn('ericksonreyes');
+        $command->passwordConfirmation()->shouldBeCalled()->willReturn('SecuredPassword');
+
+        $emptyPasswords = ['', ' ', '     '];
+        foreach ($emptyPasswords as $emptyPassword) {
+            $command->password()->shouldBeCalled()->willReturn($emptyPassword);
+            $this->shouldThrow(MissingPasswordException::class)->during(
+                'handleThis',
+                [
+                    $command
+                ]
+            );
+        }
     }
 
     public function it_requires_a_unique_username(RegisterUserCommandInterface $command, UserInterface $anExistingUser)

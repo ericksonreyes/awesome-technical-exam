@@ -34,8 +34,8 @@ Feature: User registration
     Then my registration will be rejected because the passwords were left blank
 
     Examples:
-      | email              | password        | password_confirmation |
-      | erickson@reyes.com | SecuredPassword | SecuredPassword       |
+      | email              |
+      | erickson@reyes.com |
 
 
   Scenario Outline: E-mail is already used.

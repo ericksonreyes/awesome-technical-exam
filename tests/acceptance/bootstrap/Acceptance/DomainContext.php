@@ -2,6 +2,7 @@
 
 namespace Acceptance;
 
+use Acceptance\Mock\MockUserPasswordEncryptionService;
 use Acceptance\Mock\MockUserRepository;
 use Acceptance\Mock\RegisterUserCommand;
 use Behat\Behat\Context\Context;
@@ -9,6 +10,7 @@ use Behat\Behat\Tester\Exception\PendingException;
 use Exception;
 use Github\Application\EmailFormatValidatingUserRegistrationHandler;
 use Github\Application\PasswordLengthValidatingUserRegistrationHandler;
+use Github\Application\UserPasswordEncryptionServiceInterface;
 use Github\Application\UserRegistrationHandler;
 use Github\Application\UserRegistrationHandlerInterface;
 use Github\Domain\Model\Exception\DuplicateUsernameException;
@@ -62,9 +64,9 @@ class DomainContext implements Context
     private $encounteredException;
 
     /**
-     * @var UserRegistrationHandlerInterface[]
+     * @var UserPasswordEncryptionServiceInterface
      */
-    private $handlerValidationClasses = [];
+    private $userPasswordEncryptionService;
 
     /**
      * Initializes context.
@@ -89,8 +91,12 @@ class DomainContext implements Context
         $this->encounteredException = null;
         $this->userRegistrationHandler = [];
         $this->userRepository = new MockUserRepository();
+        $this->userPasswordEncryptionService = new MockUserPasswordEncryptionService();
 
-        $userRegistrationHandler = new UserRegistrationHandler($this->userRepository);
+        $userRegistrationHandler = new UserRegistrationHandler(
+            $this->userRepository,
+            $this->userPasswordEncryptionService
+        );
         $emailValidatingUserRegistrationHandler = new EmailFormatValidatingUserRegistrationHandler(
             $userRegistrationHandler
         );
