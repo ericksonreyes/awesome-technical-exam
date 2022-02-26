@@ -7,27 +7,8 @@ use Github\Domain\Model\Exception\UserNotFoundException;
 use Github\Domain\Model\UserInterface;
 use Github\Domain\Repository\UserRepository;
 
-class UserAuthenticationHandler implements UserAuthenticationHandlerInterface
+class UserAuthenticationHandler extends UserAuthenticationAwareHandler implements UserAuthenticationHandlerInterface
 {
-    /**
-     * @var UserRepository
-     */
-    private $userRepository;
-
-    /**
-     * @var UserPasswordEncryptionServiceInterface
-     */
-    private $passwordEncryptionService;
-
-    public function __construct(
-        UserRepository $userRepository,
-        UserPasswordEncryptionServiceInterface $passwordEncryptionService
-    )
-    {
-        $this->userRepository = $userRepository;
-        $this->passwordEncryptionService = $passwordEncryptionService;
-    }
-
     /**
      * @param AuthenticateUserCommandInterface $authenticateUserCommand
      */

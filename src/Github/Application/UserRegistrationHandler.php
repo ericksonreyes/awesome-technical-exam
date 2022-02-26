@@ -12,22 +12,8 @@ use Github\Domain\Repository\UserRepository;
  * Class UserRegistrationHandler
  * @package Github\Application
  */
-class UserRegistrationHandler implements UserRegistrationHandlerInterface
+class UserRegistrationHandler extends UserAuthenticationAwareHandler implements UserRegistrationHandlerInterface
 {
-    /**
-     * @var UserRepository
-     */
-    private $userRepository;
-
-    /**
-     * UserRegistrationHandler constructor.
-     * @param UserRepository $userRepository
-     */
-    public function __construct(UserRepository $userRepository)
-    {
-        $this->userRepository = $userRepository;
-    }
-
     /**
      * @param RegisterUserCommandInterface $registerUserCommand
      */
@@ -46,8 +32,9 @@ class UserRegistrationHandler implements UserRegistrationHandlerInterface
             throw new DuplicateUsernameException('Username is already registered.');
         }
 
+        $encryptedPassword = $this->passwordEncryptionService->encrypt($password);
         $newUser = new User($id);
-        $newUser->signUp($username, $password);
+        $newUser->signUp($username, $encryptedPassword);
         $this->userRepository->store($newUser);
     }
 

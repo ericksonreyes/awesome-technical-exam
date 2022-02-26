@@ -3,6 +3,7 @@
 namespace spec\Github\Application;
 
 use Github\Application\RegisterUserCommandInterface;
+use Github\Application\UserPasswordEncryptionServiceInterface;
 use Github\Application\UserRegistrationHandler;
 use Github\Application\UserRegistrationHandlerInterface;
 use Github\Domain\Model\Exception\DuplicateUsernameException;
@@ -23,10 +24,18 @@ class UserRegistrationHandlerSpec extends ObjectBehavior
      */
     private $userRepository;
 
-    public function let(UserRepository $userRepository)
-    {
+    /**
+     * @var UserPasswordEncryptionServiceInterface
+     */
+    protected $passwordEncryptionService;
+
+    public function let(
+        UserRepository $userRepository,
+        UserPasswordEncryptionServiceInterface $passwordEncryptionService
+    ) {
         $this->beConstructedWith(
-            $this->userRepository = $userRepository
+            $this->userRepository = $userRepository,
+            $this->passwordEncryptionService = $passwordEncryptionService
         );
     }
 
@@ -47,6 +56,9 @@ class UserRegistrationHandlerSpec extends ObjectBehavior
             ->shouldBeCalled()
             ->willReturn(null);
         $this->userRepository->store(Argument::type(UserInterface::class))->shouldBeCalled();
+        $this->passwordEncryptionService->encrypt('SecuredPassword')
+            ->shouldBeCalled()
+            ->willReturn('EncryptedSecuredPassword');
 
         $this->handleThis($command)->shouldBeNull();
     }
