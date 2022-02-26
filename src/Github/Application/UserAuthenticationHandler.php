@@ -63,24 +63,4 @@ class UserAuthenticationHandler implements UserAuthenticationHandlerInterface
         }
     }
 
-    /**
-     * @param UserAuthenticationHandlerInterface $successfulAuthenticationHandler
-     */
-    public function registerSuccessfulAuthenticationHandler(
-        UserAuthenticationHandlerInterface $successfulAuthenticationHandler
-    ): void
-    {
-        $this->successfulAuthenticationHandlers[] = $successfulAuthenticationHandler;
-    }
-
-    /**
-     * @param FailedUserAuthenticationAttemptHandlerInterface $failedUserAuthenticationAttemptHandler
-     */
-    public function registerFailedAuthenticationAttemptHandler(
-        FailedUserAuthenticationAttemptHandlerInterface $failedUserAuthenticationAttemptHandler
-    ): void
-    {
-        $this->failedUserAuthenticationAttemptHandlers[] = $failedUserAuthenticationAttemptHandler;
-    }
-
 }
