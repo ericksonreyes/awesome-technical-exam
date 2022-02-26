@@ -211,7 +211,7 @@ paths:
             schema:
               type: object
               required:
-                - username
+                - email
                 - password
               properties:
                 email:
