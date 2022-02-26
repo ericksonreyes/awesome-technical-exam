@@ -34,3 +34,10 @@ GitHub for 2 minutes
 - Include proper error handling
 - Include proper logging
 - Provide a [README.md](../README.md) with instructions on how to execute your API endpoint
+
+## Bonus Challenge
+Calculate Hamming Distance
+The Hamming distance between two integers is the number of positions at which the corresponding
+bits are different.
+
+Given two integers x and y, calculate the Hamming distance.
