@@ -30,7 +30,7 @@ class EmailFormatValidatingUserRegistrationHandler implements UserRegistrationHa
      */
     public function handleThis(RegisterUserCommandInterface $registerUserCommand): void
     {
-        $email = trim($registerUserCommand->username());
+        $email = trim($registerUserCommand->email());
 
         if (trim($email) === '') {
             throw new MissingEmailException();

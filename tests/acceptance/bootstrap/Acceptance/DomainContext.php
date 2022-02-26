@@ -17,7 +17,7 @@ use Github\Application\UserAuthenticationHandler;
 use Github\Application\UserPasswordEncryptionServiceInterface;
 use Github\Application\UserRegistrationHandler;
 use Github\Application\UserRegistrationHandlerInterface;
-use Github\Domain\Model\Exception\DuplicateUsernameException;
+use Github\Domain\Model\Exception\EmailAlreadyUsedException;
 use Github\Domain\Model\Exception\IncorrectPasswordException;
 use Github\Domain\Model\Exception\InvalidEmailException;
 use Github\Domain\Model\Exception\MismatchedPasswordsException;
@@ -274,7 +274,7 @@ class DomainContext implements Context
     public function myRegistrationWillBeRejectedBecauseTheEMailIsAlreadyUsed()
     {
         assert(
-            $this->encounteredException instanceof DuplicateUsernameException,
+            $this->encounteredException instanceof EmailAlreadyUsedException,
             'Duplicate email was accepted. When it should not be.'
         );
     }

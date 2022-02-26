@@ -2,7 +2,7 @@
 <html lang="en">
  <head>
   <meta charset="UTF-8">
-  <title>Code Coverage for /var/www/html/src/Github/Domain/Model/Exception/PasswordTooShortException.php</title>
+  <title>Code Coverage for /var/www/html/src/Github/Domain/Model/Exception/EmailAlreadyUsedException.php</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="../../../_css/bootstrap.min.css" rel="stylesheet" type="text/css">
   <link href="../../../_css/octicons.css" rel="stylesheet" type="text/css">
@@ -20,7 +20,7 @@
          <li class="breadcrumb-item"><a href="../../index.html">Domain</a></li>
          <li class="breadcrumb-item"><a href="../index.html">Model</a></li>
          <li class="breadcrumb-item"><a href="index.html">Exception</a></li>
-         <li class="breadcrumb-item active">PasswordTooShortException.php</li>
+         <li class="breadcrumb-item active">EmailAlreadyUsedException.php</li>
 
        </ol>
       </nav>
@@ -59,7 +59,7 @@
       </tr>
 
       <tr>
-       <td class=""><abbr title="Github\Domain\Model\Exception\PasswordTooShortException">PasswordTooShortException</abbr></td>
+       <td class=""><abbr title="Github\Domain\Model\Exception\EmailAlreadyUsedException">EmailAlreadyUsedException</abbr></td>
        <td class=" big"></td>
        <td class=" small"><div align="right">n/a</div></td>
        <td class=" small"><div align="right">0&nbsp;/&nbsp;0</div></td>
@@ -82,18 +82,16 @@
     <tr class=" d-flex"><td  class="col-1 text-right"><a id="2" href="#2">2</a></td><td class="col-11 codeLine"></td></tr>
     <tr class=" d-flex"><td  class="col-1 text-right"><a id="3" href="#3">3</a></td><td class="col-11 codeLine"><span class="keyword">namespace</span><span class="default">&nbsp;</span><span class="default">Github\Domain\Model\Exception</span><span class="keyword">;</span></td></tr>
     <tr class=" d-flex"><td  class="col-1 text-right"><a id="4" href="#4">4</a></td><td class="col-11 codeLine"></td></tr>
-    <tr class=" d-flex"><td  class="col-1 text-right"><a id="5" href="#5">5</a></td><td class="col-11 codeLine"><span class="keyword">use</span><span class="default">&nbsp;</span><span class="default">InvalidArgumentException</span><span class="keyword">;</span></td></tr>
+    <tr class=" d-flex"><td  class="col-1 text-right"><a id="5" href="#5">5</a></td><td class="col-11 codeLine"><span class="keyword">use</span><span class="default">&nbsp;</span><span class="default">Github\Shared\Exceptions\ConflictException</span><span class="keyword">;</span></td></tr>
     <tr class=" d-flex"><td  class="col-1 text-right"><a id="6" href="#6">6</a></td><td class="col-11 codeLine"></td></tr>
     <tr class=" d-flex"><td  class="col-1 text-right"><a id="7" href="#7">7</a></td><td class="col-11 codeLine"><span class="comment">/**</span></td></tr>
-    <tr class=" d-flex"><td  class="col-1 text-right"><a id="8" href="#8">8</a></td><td class="col-11 codeLine"><span class="comment">&nbsp;*&nbsp;Class&nbsp;PasswordTooShortException</span></td></tr>
+    <tr class=" d-flex"><td  class="col-1 text-right"><a id="8" href="#8">8</a></td><td class="col-11 codeLine"><span class="comment">&nbsp;*&nbsp;Class&nbsp;EmailAlreadyUsedException</span></td></tr>
     <tr class=" d-flex"><td  class="col-1 text-right"><a id="9" href="#9">9</a></td><td class="col-11 codeLine"><span class="comment">&nbsp;*&nbsp;@package&nbsp;Github\Domain\Model\Exception</span></td></tr>
     <tr class=" d-flex"><td  class="col-1 text-right"><a id="10" href="#10">10</a></td><td class="col-11 codeLine"><span class="comment">&nbsp;*/</span></td></tr>
-    <tr class=" d-flex"><td  class="col-1 text-right"><a id="11" href="#11">11</a></td><td class="col-11 codeLine"><span class="keyword">class</span><span class="default">&nbsp;</span><span class="default">PasswordTooShortException</span><span class="default">&nbsp;</span><span class="keyword">extends</span><span class="default">&nbsp;</span><span class="default">InvalidArgumentException</span></td></tr>
+    <tr class=" d-flex"><td  class="col-1 text-right"><a id="11" href="#11">11</a></td><td class="col-11 codeLine"><span class="keyword">class</span><span class="default">&nbsp;</span><span class="default">EmailAlreadyUsedException</span><span class="default">&nbsp;</span><span class="keyword">extends</span><span class="default">&nbsp;</span><span class="default">ConflictException</span></td></tr>
     <tr class=" d-flex"><td  class="col-1 text-right"><a id="12" href="#12">12</a></td><td class="col-11 codeLine"><span class="keyword">{</span></td></tr>
-    <tr class=" d-flex"><td  class="col-1 text-right"><a id="13" href="#13">13</a></td><td class="col-11 codeLine"><span class="default">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="keyword">protected</span><span class="default">&nbsp;</span><span class="default">$message</span><span class="default">&nbsp;</span><span class="keyword">=</span><span class="default">&nbsp;</span><span class="default">'Password&nbsp;is&nbsp;too&nbsp;short.'</span><span class="keyword">;</span></td></tr>
-    <tr class=" d-flex"><td  class="col-1 text-right"><a id="14" href="#14">14</a></td><td class="col-11 codeLine"></td></tr>
-    <tr class=" d-flex"><td  class="col-1 text-right"><a id="15" href="#15">15</a></td><td class="col-11 codeLine"><span class="default">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="keyword">protected</span><span class="default">&nbsp;</span><span class="default">$code</span><span class="default">&nbsp;</span><span class="keyword">=</span><span class="default">&nbsp;</span><span class="default">400</span><span class="keyword">;</span></td></tr>
-    <tr class=" d-flex"><td  class="col-1 text-right"><a id="16" href="#16">16</a></td><td class="col-11 codeLine"><span class="keyword">}</span></td></tr>
+    <tr class=" d-flex"><td  class="col-1 text-right"><a id="13" href="#13">13</a></td><td class="col-11 codeLine"><span class="default">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="keyword">protected</span><span class="default">&nbsp;</span><span class="default">$message</span><span class="default">&nbsp;</span><span class="keyword">=</span><span class="default">&nbsp;</span><span class="default">'E-mail&nbsp;already&nbsp;in&nbsp;use.'</span><span class="keyword">;</span></td></tr>
+    <tr class=" d-flex"><td  class="col-1 text-right"><a id="14" href="#14">14</a></td><td class="col-11 codeLine"><span class="keyword">}</span></td></tr>
 
 </tbody>
 </table>

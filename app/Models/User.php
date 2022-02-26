@@ -46,7 +46,7 @@ class User extends Model implements UserRepository
     {
         $newUser = new self();
         $newUser->guid = $user->id();
-        $newUser->username = $user->username();
+        $newUser->username = $user->email();
         $newUser->password = $user->password();
         $newUser->status = $user->accountStatus();
         $newUser->save();

@@ -47,7 +47,7 @@ class MockUserRepository implements UserRepository
     public function findOneByUsernameAndPassword(string $username, $password): ?UserAttributesInterface
     {
         foreach ($this->users as $user) {
-            if ($user->username() === $username && $user->password() === $password) {
+            if ($user->email() === $username && $user->password() === $password) {
                 return $user;
             }
         }
@@ -61,7 +61,7 @@ class MockUserRepository implements UserRepository
     public function findOneByUsername(string $username): ?UserAttributesInterface
     {
         foreach ($this->users as $user) {
-            if ($user->username() === $username) {
+            if ($user->email() === $username) {
                 return $user;
             }
         }

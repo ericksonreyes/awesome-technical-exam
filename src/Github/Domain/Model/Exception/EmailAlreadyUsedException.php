@@ -5,10 +5,10 @@ namespace Github\Domain\Model\Exception;
 use Github\Shared\Exceptions\ConflictException;
 
 /**
- * Class DuplicateUsernameException
+ * Class EmailAlreadyUsedException
  * @package Github\Domain\Model\Exception
  */
-class DuplicateUsernameException extends ConflictException
+class EmailAlreadyUsedException extends ConflictException
 {
-    protected $message = 'Username already in use.';
+    protected $message = 'E-mail already in use.';
 }

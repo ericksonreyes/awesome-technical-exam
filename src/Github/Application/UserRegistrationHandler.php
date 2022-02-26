@@ -2,8 +2,9 @@
 
 namespace Github\Application;
 
-use Github\Domain\Model\Exception\DuplicateUsernameException;
+use Github\Domain\Model\Exception\EmailAlreadyUsedException;
 use Github\Domain\Model\Exception\MismatchedPasswordsException;
+use Github\Domain\Model\Exception\MissingEmailException;
 use Github\Domain\Model\Exception\MissingPasswordException;
 use Github\Domain\Model\Exception\MissingUsernameException;
 use Github\Domain\Model\User;
@@ -35,12 +36,12 @@ class UserRegistrationHandler extends UserAuthenticationAwareHandler implements 
     public function handleThis(RegisterUserCommandInterface $registerUserCommand): void
     {
         $id = trim($registerUserCommand->id());
-        $username = trim($registerUserCommand->username());
+        $email = trim($registerUserCommand->email());
         $password = trim($registerUserCommand->password());
         $passwordConfirmation = trim($registerUserCommand->passwordConfirmation());
 
-        if ($username === '') {
-            throw new MissingUsernameException();
+        if ($email === '') {
+            throw new MissingEmailException();
         }
 
         if ($password === '') {
@@ -51,13 +52,13 @@ class UserRegistrationHandler extends UserAuthenticationAwareHandler implements 
             throw new MismatchedPasswordsException('Passwords does not match.');
         }
 
-        if ($this->usernameIsAlreadyUsed($username)) {
-            throw new DuplicateUsernameException('Username is already registered.');
+        if ($this->usernameIsAlreadyUsed($email)) {
+            throw new EmailAlreadyUsedException('Username is already registered.');
         }
 
         $encryptedPassword = $this->passwordEncryptionService->encrypt($password);
         $newUser = new User($id);
-        $newUser->signUp($username, $encryptedPassword);
+        $newUser->signUp($email, $encryptedPassword);
         $this->userRepository->store($newUser);
     }
 

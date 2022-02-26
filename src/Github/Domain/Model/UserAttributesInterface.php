@@ -18,7 +18,7 @@ interface UserAttributesInterface
     /**
      * @return string
      */
-    public function username(): string;
+    public function email(): string;
 
     /**
      * @return string

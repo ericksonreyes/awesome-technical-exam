@@ -34,7 +34,7 @@ class EmailFormatValidatingUserRegistrationHandlerSpec extends ObjectBehavior
     public function it_validates_email_address_format_and_calls_the_next_handler(
         RegisterUserCommandInterface $registerUserCommand
     ){
-        $registerUserCommand->username()->shouldBeCalled()->willReturn('ercbluemonday@yahoo.com');
+        $registerUserCommand->email()->shouldBeCalled()->willReturn('ercbluemonday@yahoo.com');
         $this->userRegistrationHandler->handleThis($registerUserCommand)->shouldBeCalled();
 
         $this->handleThis($registerUserCommand)->shouldBeNull();
@@ -44,7 +44,7 @@ class EmailFormatValidatingUserRegistrationHandlerSpec extends ObjectBehavior
         RegisterUserCommandInterface $registerUserCommand
     ) {
         $emptyEmailAddress = str_repeat(' ', mt_rand(0, 5));
-        $registerUserCommand->username()->shouldBeCalled()->willReturn($emptyEmailAddress);
+        $registerUserCommand->email()->shouldBeCalled()->willReturn($emptyEmailAddress);
 
         $this->userRegistrationHandler->handleThis($registerUserCommand)->shouldNotBeCalled();
 
@@ -62,7 +62,7 @@ class EmailFormatValidatingUserRegistrationHandlerSpec extends ObjectBehavior
         $invalidEmailAddresses = ['@email', 'erickson@', 'erickson@mail'];
 
         foreach ($invalidEmailAddresses as $invalidEmailAddress) {
-            $registerUserCommand->username()->shouldBeCalled()->willReturn($invalidEmailAddress);
+            $registerUserCommand->email()->shouldBeCalled()->willReturn($invalidEmailAddress);
             $this->userRegistrationHandler->handleThis($registerUserCommand)->shouldNotBeCalled();
 
             $this->shouldThrow(InvalidEmailException::class)->during(

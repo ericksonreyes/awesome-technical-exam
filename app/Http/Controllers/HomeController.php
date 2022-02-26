@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Exception;
-use Github\Domain\Model\Exception\DuplicateUsernameException;
+use Github\Domain\Model\Exception\EmailAlreadyUsedException;
 use Illuminate\Http\Response;
 use ReflectionException;
 

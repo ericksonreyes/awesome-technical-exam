@@ -2,8 +2,8 @@
 
 namespace Github\Domain\Model;
 
+use Github\Domain\Model\Exception\MissingEmailException;
 use Github\Domain\Model\Exception\MissingPasswordException;
-use Github\Domain\Model\Exception\MissingUsernameException;
 
 /**
  * Class User
@@ -19,7 +19,7 @@ class User implements UserInterface
     /**
      * @var string
      */
-    private $username = '';
+    private $email = '';
 
     /**
      * @var string
@@ -51,9 +51,9 @@ class User implements UserInterface
     /**
      * @return string
      */
-    public function username(): string
+    public function email(): string
     {
-        return $this->username;
+        return $this->email;
     }
 
     /**
@@ -73,20 +73,20 @@ class User implements UserInterface
     }
 
     /**
-     * @param string $username
+     * @param string $email
      * @param string $password
      */
-    public function signUp(string $username, string $password): void
+    public function signUp(string $email, string $password): void
     {
-        if (trim($username) === '') {
-            throw new MissingUsernameException();
+        if (trim($email) === '') {
+            throw new MissingEmailException();
         }
 
         if (trim($password) === '') {
             throw new MissingPasswordException();
         }
 
-        $this->username = $username;
+        $this->email = $email;
         $this->password = $password;
         $this->accountStatus = UserInterface::ACCOUNT_STATUS_ACTIVE;
     }

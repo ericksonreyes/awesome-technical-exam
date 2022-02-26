@@ -12,8 +12,8 @@ interface UserInterface extends UserAttributesInterface
     public const ACCOUNT_STATUS_ACTIVE = 'Active';
 
     /**
-     * @param string $username
+     * @param string $email
      * @param string $password
      */
-    public function signUp(string $username, string $password): void;
+    public function signUp(string $email, string $password): void;
 }

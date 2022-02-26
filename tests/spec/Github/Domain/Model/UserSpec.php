@@ -2,6 +2,7 @@
 
 namespace spec\Github\Domain\Model;
 
+use Github\Domain\Model\Exception\MissingEmailException;
 use Github\Domain\Model\Exception\MissingPasswordException;
 use Github\Domain\Model\Exception\MissingUsernameException;
 use Github\Domain\Model\User;
@@ -35,9 +36,9 @@ class UserSpec extends ObjectBehavior
         $this->id()->shouldBeString();
     }
 
-    public function it_has_a_username()
+    public function it_has_an_email()
     {
-        $this->username()->shouldBeString();
+        $this->email()->shouldBeString();
     }
 
     public function it_has_a_password()
@@ -52,37 +53,36 @@ class UserSpec extends ObjectBehavior
 
     public function it_can_sign_up()
     {
-        $username = 'ericksonreyes';
+        $email = 'erickson@email.com';
         $password = 'SecuredPassword';
 
-        $this->signUp($username, $password)->shouldBeNull();
-        $this->username()->shouldReturn($username);
+        $this->signUp($email, $password)->shouldBeNull();
+        $this->email()->shouldReturn($email);
         $this->password()->shouldReturn($password);
         $this->accountStatus()->shouldReturn('Active');
     }
 
     public function it_requires_a_username_when_signing_up() {
-        $emptyUsername = $this->makeEmptyString();
+        $emptyEmail = $this->makeEmptyString();
         $password = 'SecuredPassword';
 
-        $this->shouldThrow(MissingUsernameException::class)->during(
+        $this->shouldThrow(MissingEmailException::class)->during(
             'signUp',
             [
-                $emptyUsername,
+                $emptyEmail,
                 $password
             ]
         );
     }
 
     public function it_requires_a_password_when_signing_up() {
-        $username = 'ericksonreyes';
+        $email = 'erickson@email.com';
         $emptyPassword = $this->makeEmptyString();
-        $password = 'SecuredPassword';
 
         $this->shouldThrow(MissingPasswordException::class)->during(
             'signUp',
             [
-                $username,
+                $email,
                 $emptyPassword
             ]
         );
