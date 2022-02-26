@@ -8,7 +8,7 @@ printf "$green" "###############################################################
 printf "$green" "# "
 printf "$green" "# Awesome Technical Exam API Installer."
 printf "$green" "# "
-printf "$green" "# Do you want to install Awesome Technical Exam API Installer in your computer? [Y/n]?"
+printf "$green" "# Do you want to install Awesome Technical Exam API in your computer? [Y/n]?"
 printf "$green" "# "
 printf "$green" "###################################################################################################"
 read -p "" choice
