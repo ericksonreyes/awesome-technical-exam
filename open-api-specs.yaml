@@ -6,7 +6,7 @@ info:
     email: ercbluemonday@yahoo.com
   version: 1.0.0
 servers:
-  - url: 'http://localhost:8000/v1/api'
+  - url: 'http://localhost:18000/v1/api'
     description: Local Server
     variables:
       protocol:
@@ -136,12 +136,20 @@ paths:
                 properties:
                   id:
                     type: string
+                    description: Unique identifier to the newly registered user.
+                    example: user-10000001
                   accessToken:
                     type: string
+                    description: The access token string as issued by the authorization server.
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
                   tokenType:
                     type: string
+                    description: The type of token this is.
+                    example: bearer
                   expiresIn:
-                    type: string
+                    type: integer
+                    description: Number of seconds that the access token will be valid.
+                    example: 3600
         '400':
           description: Invalid, incomplete or malformed request.
           content:
@@ -225,6 +233,7 @@ paths:
                   accessToken:
                     type: string
                     description: The access token string as issued by the authorization server.
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
                   tokenType:
                     type: string
                     description: The type of token this is.
