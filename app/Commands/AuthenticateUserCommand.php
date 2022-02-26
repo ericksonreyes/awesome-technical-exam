@@ -37,7 +37,7 @@ class AuthenticateUserCommand implements AuthenticateUserCommandInterface
     /**
      * @return string
      */
-    public function username(): string
+    public function email(): string
     {
         return $this->username;
     }

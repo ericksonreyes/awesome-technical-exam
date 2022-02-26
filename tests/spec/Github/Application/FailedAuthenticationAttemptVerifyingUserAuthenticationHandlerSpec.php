@@ -55,7 +55,7 @@ class FailedAuthenticationAttemptVerifyingUserAuthenticationHandlerSpec extends 
         AuthenticateUserCommandInterface $authenticateUserCommand
     )
     {
-        $authenticateUserCommand->username()->shouldBeCalled()->willReturn('erickson');
+        $authenticateUserCommand->email()->shouldBeCalled()->willReturn('erickson');
         $this->failedAttemptLogger->userExceededTheDailyLimit('erickson')->shouldBeCalled()->willReturn(false);
         $this->failedAttemptLogger->record('erickson')->shouldBeCalledTimes(1);
         $this->userAuthenticationHandler->handleThis($authenticateUserCommand)
@@ -73,7 +73,7 @@ class FailedAuthenticationAttemptVerifyingUserAuthenticationHandlerSpec extends 
         AuthenticateUserCommandInterface $authenticateUserCommand
     )
     {
-        $authenticateUserCommand->username()->shouldBeCalled()->willReturn('erickson');
+        $authenticateUserCommand->email()->shouldBeCalled()->willReturn('erickson');
         $this->failedAttemptLogger->userExceededTheDailyLimit('erickson')->shouldBeCalled()->willReturn(true);
 
         $this->shouldThrow(TooManyFailedAuthenticationAttemptsException::class)->during(

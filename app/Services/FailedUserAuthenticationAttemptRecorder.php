@@ -26,7 +26,7 @@ class FailedUserAuthenticationAttemptRecorder implements FailedUserAuthenticatio
     {
         if ($exceptionRaised instanceof IncorrectPasswordException) {
             $model = new FailedUserAuthenticationAttemptModel();
-            $model->username = $authenticateUserCommand->username();
+            $model->username = $authenticateUserCommand->email();
             $model->headers = json_encode(getallheaders());
             $model->save();
         }

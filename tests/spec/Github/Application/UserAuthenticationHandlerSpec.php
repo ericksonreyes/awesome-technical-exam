@@ -7,6 +7,7 @@ use Github\Application\UserAuthenticationHandler;
 use Github\Application\UserAuthenticationHandlerInterface;
 use Github\Application\UserPasswordEncryptionServiceInterface;
 use Github\Domain\Model\Exception\IncorrectPasswordException;
+use Github\Domain\Model\Exception\MissingEmailException;
 use Github\Domain\Model\Exception\MissingPasswordException;
 use Github\Domain\Model\Exception\MissingUsernameException;
 use Github\Domain\Model\Exception\UserNotFoundException;
@@ -51,16 +52,16 @@ class UserAuthenticationHandlerSpec extends ObjectBehavior
         UserInterface $anExistingUser
     )
     {
-        $username = 'erickson';
+        $email = 'erickson@reyes.com';
         $password = 'SecuredPassword';
         $encryptedPassword = 'EncryptedPassword';
 
-        $authenticateUserCommand->username()->shouldBeCalled()->willReturn($username);
+        $authenticateUserCommand->email()->shouldBeCalled()->willReturn($email);
         $authenticateUserCommand->password()->shouldBeCalled()->willReturn($password);
         $anExistingUser->password()->shouldBeCalled()->willReturn($encryptedPassword);
 
         $this->passwordEncryptionService->encrypt($password)->shouldBeCalled()->willReturn($encryptedPassword);
-        $this->userRepository->findOneByEmail($username)->shouldBeCalled()->willReturn($anExistingUser);
+        $this->userRepository->findOneByEmail($email)->shouldBeCalled()->willReturn($anExistingUser);
         $this->handleThis($authenticateUserCommand)->shouldBeNull();
     }
 
@@ -69,9 +70,9 @@ class UserAuthenticationHandlerSpec extends ObjectBehavior
         $password = 'SecuredPassword';
 
         foreach ($emptyUserNames as $emptyUsername) {
-            $authenticateUserCommand->username()->shouldBeCalled()->willReturn($emptyUsername);
+            $authenticateUserCommand->email()->shouldBeCalled()->willReturn($emptyUsername);
             $authenticateUserCommand->password()->shouldBeCalled()->willReturn($password);
-            $this->shouldThrow(MissingUsernameException::class)->during(
+            $this->shouldThrow(MissingEmailException::class)->during(
                 'handleThis',
                 [
                     $authenticateUserCommand
@@ -81,11 +82,11 @@ class UserAuthenticationHandlerSpec extends ObjectBehavior
     }
 
     public function it_requires_a_password(AuthenticateUserCommandInterface $authenticateUserCommand) {
-        $username = 'erickson';
+        $email = 'erickson@reyes.com';
         $emptyPasswords = ['', ' ', '     '];
 
         foreach ($emptyPasswords as $emptyPassword) {
-            $authenticateUserCommand->username()->shouldBeCalled()->willReturn($username);
+            $authenticateUserCommand->email()->shouldBeCalled()->willReturn($email);
             $authenticateUserCommand->password()->shouldBeCalled()->willReturn($emptyPassword);
             $this->shouldThrow(MissingPasswordException::class)->during(
                 'handleThis',
@@ -101,16 +102,16 @@ class UserAuthenticationHandlerSpec extends ObjectBehavior
         UserInterface $anExistingUser
     )
     {
-        $username = 'erickson';
+        $email = 'erickson@reyes.com';
         $password = 'SecuredPassword';
         $encryptedPassword = 'EncryptedPassword';
         $encryptedIncorrectPassword = 'EncryptedIncorrectPassword';
 
-        $authenticateUserCommand->username()->shouldBeCalled()->willReturn($username);
+        $authenticateUserCommand->email()->shouldBeCalled()->willReturn($email);
         $authenticateUserCommand->password()->shouldBeCalled()->willReturn($password);
         $anExistingUser->password()->shouldBeCalled()->willReturn($encryptedPassword);
 
-        $this->userRepository->findOneByEmail($username)->shouldBeCalled()->willReturn($anExistingUser);
+        $this->userRepository->findOneByEmail($email)->shouldBeCalled()->willReturn($anExistingUser);
         $this->passwordEncryptionService->encrypt($password)->shouldBeCalled()->willReturn($encryptedIncorrectPassword);
         $this->shouldThrow(IncorrectPasswordException::class)->during(
             'handleThis',
@@ -122,14 +123,13 @@ class UserAuthenticationHandlerSpec extends ObjectBehavior
 
     public function it_rejects_unregistered_users(AuthenticateUserCommandInterface $authenticateUserCommand)
     {
-        $username = 'erickson';
+        $email = 'erickson@reyes.com';
         $password = 'SecuredPassword';
-        $encryptedPassword = 'EncryptedPassword';
 
-        $authenticateUserCommand->username()->shouldBeCalled()->willReturn($username);
+        $authenticateUserCommand->email()->shouldBeCalled()->willReturn($email);
         $authenticateUserCommand->password()->shouldBeCalled()->willReturn($password);
 
-        $this->userRepository->findOneByEmail($username)->shouldBeCalled()->willReturn(null);
+        $this->userRepository->findOneByEmail($email)->shouldBeCalled()->willReturn(null);
         $this->shouldThrow(UserNotFoundException::class)->during(
             'handleThis',
             [

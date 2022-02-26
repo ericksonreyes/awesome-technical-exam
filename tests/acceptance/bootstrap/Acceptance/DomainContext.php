@@ -378,7 +378,7 @@ class DomainContext implements Context
     public function iWillBeDeniedAccessBecauseMyEMailIsEmpty()
     {
         assert(
-            $this->encounteredException instanceof MissingUsernameException,
+            $this->encounteredException instanceof MissingEmailException,
             'Empty e-mail was accepted. When it should not be.'
         );
     }

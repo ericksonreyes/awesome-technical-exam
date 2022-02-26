@@ -14,7 +14,7 @@ Feature: User login
       | email                 | password        | password_confirmation |
       | active-user@reyes.com | SecuredPassword | SecuredPassword       |
 
-  Scenario Outline: Username was empty.
+  Scenario Outline: Email is empty.
     Given my e-mail is "<email>"
     And my password is "<password>"
     And I confirm that my password is "<password_confirmation>"

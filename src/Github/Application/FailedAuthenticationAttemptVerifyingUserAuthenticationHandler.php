@@ -43,7 +43,7 @@ class FailedAuthenticationAttemptVerifyingUserAuthenticationHandler implements U
     public function handleThis(AuthenticateUserCommandInterface $authenticateUserCommand): void
     {
         try {
-            $username = $authenticateUserCommand->username();
+            $username = $authenticateUserCommand->email();
 
             if ($this->failedAttemptLogger->userExceededTheDailyLimit($username)) {
                 throw new TooManyFailedAuthenticationAttemptsException();
@@ -52,7 +52,7 @@ class FailedAuthenticationAttemptVerifyingUserAuthenticationHandler implements U
             $this->userAuthenticationHandler->handleThis($authenticateUserCommand);
         } catch (Exception $exception) {
             if ($exception instanceof IncorrectPasswordException) {
-                $this->failedAttemptLogger->record($authenticateUserCommand->username());
+                $this->failedAttemptLogger->record($authenticateUserCommand->email());
             }
             throw new $exception;
         }
