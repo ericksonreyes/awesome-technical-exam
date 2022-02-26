@@ -50,19 +50,6 @@ services:
 
 
 
-  npm:
-    build:
-      context: .
-      dockerfile: config/docker/npm.Dockerfile
-    volumes:
-      - './:/var/www/html:delegated'
-      - 'npm_cache:/root/.npm'
-    tty: true
-    network_mode: host
-    container_name: 'npm'
-
-
-
   php:
     build:
       context: .
@@ -70,6 +57,7 @@ services:
     volumes:
       - './:/var/www/html:delegated'
       - './storage/php:/var/log:delegated'
+      - 'composer_cache:/tmp'
     tty: true
     networks:
       - 'exam_network'
@@ -84,6 +72,7 @@ services:
     volumes:
       - './:/var/www/html:delegated'
       - './storage/php:/var/log:delegated'
+      - 'composer_cache:/tmp'
     restart: unless-stopped
     networks:
       - 'exam_network'
@@ -119,7 +108,4 @@ networks:
 volumes:
   redis_data:
   mysql_data:
-  rabbitmq_data:
-  elasticsearch_data:
   composer_cache:
-  npm_cache:
