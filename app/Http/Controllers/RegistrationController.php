@@ -40,7 +40,8 @@ class RegistrationController extends Controller
             $registerUserCommandHandler = new UserRegistrationHandler($userRepository);
             $registerUserCommandHandler->handleThis($registerUserCommand);
 
-            $accessTokenLifeInSeconds = env('ACCESS_TOKEN_LIFETIME');
+            $accessTokenLifeInSeconds = env('JWT_TOKEN_LIFETIME');
+            $secretKey = env('JWT_SECRET_KEY');
             $timeIssued = time();
             $expiresOn = $timeIssued + $accessTokenLifeInSeconds;
             $payload = [
@@ -50,7 +51,6 @@ class RegistrationController extends Controller
                 'iat' => $timeIssued,
                 'exp' => $expiresOn
             ];
-            $secretKey = 'erickson';
 
             $jwtGenerator = new FirebaseJSONWebTokenGenerator($secretKey);
             $accessToken = $jwtGenerator->generate($payload);
