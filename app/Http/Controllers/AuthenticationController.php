@@ -3,23 +3,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Commands\RegisterUser;
+use App\Commands\AuthenticateUserCommand;
 use App\Repository\FirebaseJSONWebTokenGenerator;
 use App\Repository\UserRepository;
-use App\Services\TimeAndMd5BasedUniqueIdentifierGenerator;
+use App\Services\Md5UserPasswordEncryptionService;
 use Exception;
-use Github\Application\UserRegistrationHandler;
+use Github\Application\UserAuthenticationHandler;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use ReflectionException;
 
 /**
- * Class RegistrationController
+ * Class AuthenticationController
  * @package App\Http\Controllers
  */
-class RegistrationController extends Controller
+class AuthenticationController extends Controller
 {
-
     /**
      * @param Request $request
      * @return Response
@@ -28,17 +27,15 @@ class RegistrationController extends Controller
     public function createAction(Request $request): Response
     {
         try {
-            $id = (new TimeAndMd5BasedUniqueIdentifierGenerator())->generate('user-');
-            $username = $request->get('email') ?? '';
+            $username = $request->get('username') ?? '';
             $password = $request->get('password') ?? '';
-            $passwordConfirmation = $request->get('passwordConfirmation') ?? '';
 
-            $registerUserCommand = (new RegisterUser($id, $username, $password))
-                ->withPasswordConfirmation($passwordConfirmation);
+            $authenticateUserCommand = new AuthenticateUserCommand($username, $password);
 
             $userRepository = new UserRepository();
-            $registerUserCommandHandler = new UserRegistrationHandler($userRepository);
-            $registerUserCommandHandler->handleThis($registerUserCommand);
+            $passwordEncryptionService = new Md5UserPasswordEncryptionService();
+            $userAuthenticationHandler = new UserAuthenticationHandler($userRepository, $passwordEncryptionService);
+            $userAuthenticationHandler->handleThis($authenticateUserCommand);
 
             $issuer = env('JWT_ISSUER');
             $accessTokenLifeInSeconds = env('JWT_TOKEN_LIFETIME');
@@ -46,7 +43,7 @@ class RegistrationController extends Controller
             $timeIssued = time();
             $expiresOn = $timeIssued + $accessTokenLifeInSeconds;
             $payload = [
-                'sub' => $id,
+                'sub' => $userRepository->findOneByUsername($username)->id(),
                 'username' => $username,
                 'iss' => $issuer,
                 'iat' => $timeIssued,
@@ -59,12 +56,11 @@ class RegistrationController extends Controller
             $expiresIn = $timeIssued + $accessTokenLifeInSeconds;
 
             $response = [
-                'id' => $id,
                 'accessToken' => $accessToken,
                 'tokenType' => $tokenType,
                 'expiresIn' => $expiresIn,
             ];
-            return \response($response, Response::HTTP_CREATED);
+            return \response($response, Response::HTTP_OK);
         } catch (Exception $exception) {
             return $this->exception($exception);
         }

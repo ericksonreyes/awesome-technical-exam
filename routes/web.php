@@ -18,3 +18,4 @@ use Laravel\Lumen\Routing\Router;
 $router->get('/', 'HomeController@indexAction');
 $router->get('/v1/api/users', 'GitlabController@indexAction');
 $router->post('/v1/api/registration', 'RegistrationController@createAction');
+$router->post('/v1/api/access_token', 'AuthenticationController@createAction');

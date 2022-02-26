@@ -1,5 +1,6 @@
 /.idea
 /build/logs/*
+!/build/logs/phpspec_coverage
 /node_modules
 /vendor
 /bin

@@ -2,7 +2,6 @@
 
 namespace Github\Application;
 
-use Exception;
 use Github\Domain\Model\Exception\IncorrectPasswordException;
 use Github\Domain\Model\Exception\UserNotFoundException;
 use Github\Domain\Model\UserInterface;
@@ -16,18 +15,17 @@ class UserAuthenticationHandler implements UserAuthenticationHandlerInterface
     private $userRepository;
 
     /**
-     * @var UserAuthenticationHandlerInterface[]
+     * @var UserPasswordEncryptionServiceInterface
      */
-    private $successfulAuthenticationHandlers = [];
+    private $passwordEncryptionService;
 
-    /**
-     * @var FailedUserAuthenticationAttemptHandlerInterface[]
-     */
-    private $failedUserAuthenticationAttemptHandlers = [];
-
-    public function __construct(UserRepository $userRepository)
+    public function __construct(
+        UserRepository $userRepository,
+        UserPasswordEncryptionServiceInterface $passwordEncryptionService
+    )
     {
         $this->userRepository = $userRepository;
+        $this->passwordEncryptionService = $passwordEncryptionService;
     }
 
     /**
@@ -38,28 +36,14 @@ class UserAuthenticationHandler implements UserAuthenticationHandlerInterface
         $username = $authenticateUserCommand->username();
         $password = $authenticateUserCommand->password();
 
-        try {
-            $anExistingUser = $this->userRepository->findOneByUsername($username);
+        $anExistingUser = $this->userRepository->findOneByUsername($username);
+        if ($anExistingUser instanceof UserInterface === false) {
+            throw new UserNotFoundException();
+        }
 
-            if ($anExistingUser instanceof UserInterface === false) {
-                throw new UserNotFoundException();
-            }
-
-            if ($anExistingUser->password() !== $password) {
-                throw new IncorrectPasswordException();
-            }
-
-            foreach ($this->successfulAuthenticationHandlers as $successfulAuthenticationHandler) {
-                $successfulAuthenticationHandler->handleThis($authenticateUserCommand);
-            }
-        } catch (Exception $exception) {
-            foreach ($this->failedUserAuthenticationAttemptHandlers as $failedUserAuthenticationAttemptHandler) {
-                $failedUserAuthenticationAttemptHandler->handleThis(
-                    $authenticateUserCommand,
-                    $exception
-                );
-            }
-            throw new $exception;
+        $encryptedPassword = $this->passwordEncryptionService->encrypt($password);
+        if ($anExistingUser->password() !== $encryptedPassword) {
+            throw new IncorrectPasswordException();
         }
     }
 
