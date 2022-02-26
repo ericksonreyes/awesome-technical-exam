@@ -17,6 +17,19 @@ use Github\Domain\Repository\UserRepository;
 class UserRegistrationHandler extends UserAuthenticationAwareHandler implements UserRegistrationHandlerInterface
 {
     /**
+     * UserRegistrationHandler constructor.
+     * @param UserRepository $userRepository
+     * @param UserPasswordEncryptionServiceInterface $passwordEncryptionService
+     */
+    public function __construct(
+        UserRepository $userRepository,
+        UserPasswordEncryptionServiceInterface $passwordEncryptionService
+    )
+    {
+        parent::__construct($userRepository, $passwordEncryptionService);
+    }
+
+    /**
      * @param RegisterUserCommandInterface $registerUserCommand
      */
     public function handleThis(RegisterUserCommandInterface $registerUserCommand): void

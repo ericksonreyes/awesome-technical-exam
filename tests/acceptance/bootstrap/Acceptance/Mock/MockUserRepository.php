@@ -4,6 +4,8 @@
 namespace Acceptance\Mock;
 
 
+use Github\Domain\Model\User;
+use Github\Domain\Model\UserAttributesInterface;
 use Github\Domain\Model\UserInterface;
 use Github\Domain\Repository\UserRepository;
 
@@ -19,6 +21,17 @@ class MockUserRepository implements UserRepository
     private $users = [];
 
     /**
+     * MockUserRepository constructor.
+     */
+    public function __construct()
+    {
+        $user = new User('user-0001');
+        $user->signUp('active-user@reyes.com', 'encrypted-SecuredPassword');
+
+        $this->users['user-1001'] = $user;
+    }
+
+    /**
      * @param UserInterface $user
      */
     public function store(UserInterface $user): void
@@ -31,7 +44,7 @@ class MockUserRepository implements UserRepository
      * @param $password
      * @return UserInterface|null
      */
-    public function findOneByUsernameAndPassword(string $username, $password): ?UserInterface
+    public function findOneByUsernameAndPassword(string $username, $password): ?UserAttributesInterface
     {
         foreach ($this->users as $user) {
             if ($user->username() === $username && $user->password() === $password) {
@@ -45,7 +58,7 @@ class MockUserRepository implements UserRepository
      * @param string $username
      * @return UserInterface|null
      */
-    public function findOneByUsername(string $username): ?UserInterface
+    public function findOneByUsername(string $username): ?UserAttributesInterface
     {
         foreach ($this->users as $user) {
             if ($user->username() === $username) {

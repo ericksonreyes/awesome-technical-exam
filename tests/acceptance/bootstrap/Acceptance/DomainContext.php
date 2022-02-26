@@ -2,6 +2,8 @@
 
 namespace Acceptance;
 
+use Acceptance\Mock\MockFailedUserAuthenticationLogger;
+use Acceptance\Mock\MockAuthenticateUserCommand;
 use Acceptance\Mock\MockUserPasswordEncryptionService;
 use Acceptance\Mock\MockUserRepository;
 use Acceptance\Mock\RegisterUserCommand;
@@ -9,17 +11,22 @@ use Behat\Behat\Context\Context;
 use Behat\Behat\Tester\Exception\PendingException;
 use Exception;
 use Github\Application\EmailFormatValidatingUserRegistrationHandler;
+use Github\Application\FailedAuthenticationAttemptVerifyingUserAuthenticationHandler;
 use Github\Application\PasswordLengthValidatingUserRegistrationHandler;
+use Github\Application\UserAuthenticationHandler;
 use Github\Application\UserPasswordEncryptionServiceInterface;
 use Github\Application\UserRegistrationHandler;
 use Github\Application\UserRegistrationHandlerInterface;
 use Github\Domain\Model\Exception\DuplicateUsernameException;
+use Github\Domain\Model\Exception\IncorrectPasswordException;
 use Github\Domain\Model\Exception\InvalidEmailException;
 use Github\Domain\Model\Exception\MismatchedPasswordsException;
 use Github\Domain\Model\Exception\MissingEmailException;
 use Github\Domain\Model\Exception\MissingPasswordException;
 use Github\Domain\Model\Exception\MissingUsernameException;
 use Github\Domain\Model\Exception\PasswordTooShortException;
+use Github\Domain\Model\Exception\TooManyFailedAuthenticationAttemptsException;
+use Github\Domain\Model\Exception\UserNotFoundException;
 use Github\Domain\Model\UserInterface;
 use Github\Domain\Repository\UserRepository;
 
@@ -69,6 +76,16 @@ class DomainContext implements Context
     private $userPasswordEncryptionService;
 
     /**
+     * @var UserAuthenticationHandler
+     */
+    private $userAuthenticationHandler;
+
+    /**
+     * @var int
+     */
+    private $allowedLoginAttempts = 0;
+
+    /**
      * Initializes context.
      *
      * Every scenario gets its own context instance.
@@ -101,6 +118,11 @@ class DomainContext implements Context
             $userRegistrationHandler
         );
         $this->userRegistrationHandler = $emailValidatingUserRegistrationHandler;
+
+        $this->userAuthenticationHandler = new UserAuthenticationHandler(
+            $this->userRepository,
+            $this->userPasswordEncryptionService
+        );
     }
 
     /**
@@ -143,18 +165,51 @@ class DomainContext implements Context
     }
 
     /**
+     * @Given I am only allowed to fail :arg1 times
+     * @param int $allowedLoginAttempts
+     */
+    public function iAmOnlyAllowedToFailTimes(int $allowedLoginAttempts)
+    {
+        $this->allowedLoginAttempts = $allowedLoginAttempts;
+    }
+
+    /**
      * @When I submit my registration information
      */
     public function iSubmitMyRegistrationInformation()
     {
-        $registerUserCommand = (new RegisterUserCommand())
-            ->setId($this->id)
-            ->setUsername($this->email)
-            ->setPassword($this->password)
-            ->setPasswordConfirmation($this->passwordConfirmation);
-
         try {
+            $registerUserCommand = (new RegisterUserCommand())
+                ->setId($this->id)
+                ->setUsername($this->email)
+                ->setPassword($this->password)
+                ->setPasswordConfirmation($this->passwordConfirmation);
+
             $this->userRegistrationHandler->handleThis($registerUserCommand);
+        } catch (Exception $exception) {
+            $this->encounteredException = $exception;
+        }
+    }
+
+
+    /**
+     * @When I try to login
+     */
+    public function iTryToLogin()
+    {
+        try {
+            $authenticateUserCommand = new MockAuthenticateUserCommand($this->email, $this->password);
+
+            if ($this->allowedLoginAttempts > 0) {
+                $failedUserAuthenticationLogger = new MockFailedUserAuthenticationLogger($this->allowedLoginAttempts);
+
+                $this->userAuthenticationHandler = new FailedAuthenticationAttemptVerifyingUserAuthenticationHandler(
+                    $this->userAuthenticationHandler,
+                    $failedUserAuthenticationLogger
+                );
+            }
+
+            $this->userAuthenticationHandler->handleThis($authenticateUserCommand);
         } catch (Exception $exception) {
             $this->encounteredException = $exception;
         }
@@ -269,19 +324,19 @@ class DomainContext implements Context
     }
 
     /**
-     * @When I try to login
-     */
-    public function iTryToLogin()
-    {
-        throw new PendingException();
-    }
-
-    /**
      * @Then I will be allowed access
      */
     public function iWillBeAllowedAccess()
     {
-        throw new PendingException();
+        $message = 'An error was raised. When it should not be.';
+        if ($this->encounteredException instanceof Exception) {
+            $message = get_class($this->encounteredException) . ' error was raised. When it should not be.';
+        }
+
+        assert(
+            is_null($this->encounteredException),
+            $message
+        );
     }
 
     /**
@@ -289,7 +344,10 @@ class DomainContext implements Context
      */
     public function iWillBeDeniedAccessBecauseOfIncorrectPassword()
     {
-        throw new PendingException();
+        assert(
+            $this->encounteredException instanceof IncorrectPasswordException,
+            'Empty password was accepted. When it should not be.'
+        );
     }
 
     /**
@@ -297,7 +355,10 @@ class DomainContext implements Context
      */
     public function iWillBeDeniedAccessBecauseIAmNotARegisteredUser()
     {
-        throw new PendingException();
+        assert(
+            $this->encounteredException instanceof UserNotFoundException,
+            'Anonymous user was authenticated. When it should not be.'
+        );
     }
 
     /**
@@ -305,6 +366,31 @@ class DomainContext implements Context
      */
     public function iWillBeBlockedBecauseOfMultipleFailedLoginAttempts()
     {
-        throw new PendingException();
+        assert(
+            $this->encounteredException instanceof TooManyFailedAuthenticationAttemptsException,
+            'Excessive failed authentication attempts was allowed. When it should not be.'
+        );
+    }
+
+    /**
+     * @Then I will be denied access because my e-mail is empty
+     */
+    public function iWillBeDeniedAccessBecauseMyEMailIsEmpty()
+    {
+        assert(
+            $this->encounteredException instanceof MissingUsernameException,
+            'Empty e-mail was accepted. When it should not be.'
+        );
+    }
+
+    /**
+     * @Then I will be denied access because my password is empty
+     */
+    public function iWillBeDeniedAccessBecauseMyPasswordIsEmpty()
+    {
+        assert(
+            $this->encounteredException instanceof MissingPasswordException,
+            'Empty password was accepted. When it should not be.'
+        );
     }
 }

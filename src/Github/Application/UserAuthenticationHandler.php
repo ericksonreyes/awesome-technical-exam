@@ -7,9 +7,28 @@ use Github\Domain\Model\Exception\MissingPasswordException;
 use Github\Domain\Model\Exception\MissingUsernameException;
 use Github\Domain\Model\Exception\UserNotFoundException;
 use Github\Domain\Model\UserInterface;
+use Github\Domain\Repository\UserRepository;
 
+/**
+ * Class UserAuthenticationHandler
+ * @package Github\Application
+ */
 class UserAuthenticationHandler extends UserAuthenticationAwareHandler implements UserAuthenticationHandlerInterface
 {
+
+    /**
+     * UserAuthenticationHandler constructor.
+     * @param UserRepository $userRepository
+     * @param UserPasswordEncryptionServiceInterface $passwordEncryptionService
+     */
+    public function __construct(
+        UserRepository $userRepository,
+        UserPasswordEncryptionServiceInterface $passwordEncryptionService
+    )
+    {
+        parent::__construct($userRepository, $passwordEncryptionService);
+    }
+
     /**
      * @param AuthenticateUserCommandInterface $authenticateUserCommand
      */
