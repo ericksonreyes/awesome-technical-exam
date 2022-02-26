@@ -2,6 +2,7 @@
 
 namespace Github\Application;
 
+use Exception;
 use Github\Domain\Model\Exception\IncorrectPasswordException;
 use Github\Domain\Model\Exception\UserNotFoundException;
 use Github\Domain\Model\UserInterface;
@@ -13,6 +14,16 @@ class UserAuthenticationHandler implements UserAuthenticationHandlerInterface
      * @var UserRepository
      */
     private $userRepository;
+
+    /**
+     * @var UserAuthenticationHandlerInterface[]
+     */
+    private $successfulAuthenticationHandlers = [];
+
+    /**
+     * @var FailedUserAuthenticationAttemptHandlerInterface[]
+     */
+    private $failedUserAuthenticationAttemptHandlers = [];
 
     public function __construct(UserRepository $userRepository)
     {
@@ -27,15 +38,49 @@ class UserAuthenticationHandler implements UserAuthenticationHandlerInterface
         $username = $authenticateUserCommand->username();
         $password = $authenticateUserCommand->password();
 
-        $anExistingUser = $this->userRepository->findOneByUsername($username);
+        try {
+            $anExistingUser = $this->userRepository->findOneByUsername($username);
 
-        if ($anExistingUser instanceof UserInterface === false) {
-            throw new UserNotFoundException();
-        }
+            if ($anExistingUser instanceof UserInterface === false) {
+                throw new UserNotFoundException();
+            }
 
-        if ($anExistingUser->password() !== $password) {
-            throw new IncorrectPasswordException();
+            if ($anExistingUser->password() !== $password) {
+                throw new IncorrectPasswordException();
+            }
+
+            foreach ($this->successfulAuthenticationHandlers as $successfulAuthenticationHandler) {
+                $successfulAuthenticationHandler->handleThis($authenticateUserCommand);
+            }
+        } catch (Exception $exception) {
+            foreach ($this->failedUserAuthenticationAttemptHandlers as $failedUserAuthenticationAttemptHandler) {
+                $failedUserAuthenticationAttemptHandler->handleThis(
+                    $authenticateUserCommand,
+                    $exception
+                );
+            }
+            throw new $exception;
         }
+    }
+
+    /**
+     * @param UserAuthenticationHandlerInterface $successfulAuthenticationHandler
+     */
+    public function registerSuccessfulAuthenticationHandler(
+        UserAuthenticationHandlerInterface $successfulAuthenticationHandler
+    ): void
+    {
+        $this->successfulAuthenticationHandlers[] = $successfulAuthenticationHandler;
+    }
+
+    /**
+     * @param FailedUserAuthenticationAttemptHandlerInterface $failedUserAuthenticationAttemptHandler
+     */
+    public function registerFailedAuthenticationAttemptHandler(
+        FailedUserAuthenticationAttemptHandlerInterface $failedUserAuthenticationAttemptHandler
+    ): void
+    {
+        $this->failedUserAuthenticationAttemptHandlers[] = $failedUserAuthenticationAttemptHandler;
     }
 
 }
