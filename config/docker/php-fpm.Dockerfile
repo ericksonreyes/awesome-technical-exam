@@ -32,6 +32,12 @@ WORKDIR /var/www/html
 
 RUN chown -R www-data:www-data /var/www/html
 
+RUN chown -R www-data:www-data /var/log
+
+RUN chmod a+w /var/log
+
+RUN touch /var/log/php_error.log
+
 COPY --from=build /var/www/html /var/www/html
 
 RUN chmod -R 0755 /var/www/html/storage
