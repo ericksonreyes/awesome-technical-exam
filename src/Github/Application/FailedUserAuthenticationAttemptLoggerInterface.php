@@ -8,9 +8,9 @@ interface FailedUserAuthenticationAttemptLoggerInterface
 {
 
     /**
-     * @param string $username
+     * @param string $email
      */
-    public function record(string $username): void;
+    public function record(string $email): void;
 
     /**
      * @param string $username

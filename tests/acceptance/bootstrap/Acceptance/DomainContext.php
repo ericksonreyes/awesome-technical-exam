@@ -280,7 +280,6 @@ class DomainContext implements Context
 
         try {
             $this->userRegistrationHandler->handleThis($registerUserCommand);
-            $this->userRegistrationHandler->handleThis($registerUserCommand);
         } catch (Exception $exception) {
             $this->encounteredException = $exception;
         }
@@ -362,9 +361,15 @@ class DomainContext implements Context
      */
     public function iWillBeDeniedAccessBecauseOfIncorrectPassword()
     {
+        $message = 'Empty password was accepted. When it should not be.';
+        if ($this->encounteredException instanceof IncorrectPasswordException === false) {
+            $message = get_class($this->encounteredException) . ' error was raised. ' .
+            'but the expected error is ' . IncorrectPasswordException::class;
+        }
+
         assert(
             $this->encounteredException instanceof IncorrectPasswordException,
-            'Empty password was accepted. When it should not be.'
+            $message
         );
     }
 
@@ -384,9 +389,15 @@ class DomainContext implements Context
      */
     public function iWillBeBlockedBecauseOfMultipleFailedLoginAttempts()
     {
+        $message = 'Excessive failed authentication attempts was allowed. When it should not be.';
+        if ($this->encounteredException instanceof TooManyFailedAuthenticationAttemptsException === false) {
+            $message = get_class($this->encounteredException) . ' error was raised. ' .
+                'but the expected error is ' . TooManyFailedAuthenticationAttemptsException::class;
+        }
+
         assert(
             $this->encounteredException instanceof TooManyFailedAuthenticationAttemptsException,
-            'Excessive failed authentication attempts was allowed. When it should not be.'
+            $message
         );
     }
 

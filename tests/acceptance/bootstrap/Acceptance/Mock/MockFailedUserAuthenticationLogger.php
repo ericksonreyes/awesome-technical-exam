@@ -33,14 +33,14 @@ class MockFailedUserAuthenticationLogger implements FailedUserAuthenticationAtte
 
 
     /**
-     * @param string $username
+     * @param string $email
      */
-    public function record(string $username): void
+    public function record(string $email): void
     {
-        if (array_key_exists($username, $this->failedAttempts) === false) {
-            $this->failedAttempts[$username] = 0;
+        if (array_key_exists($email, $this->failedAttempts) === false) {
+            $this->failedAttempts[$email] = 0;
         }
-        $this->failedAttempts[$username]++;
+        $this->failedAttempts[$email]++;
     }
 
     /**
@@ -54,7 +54,7 @@ class MockFailedUserAuthenticationLogger implements FailedUserAuthenticationAtte
         }
         $failedAttempts = $this->failedAttempts[$username];
 
-        return $failedAttempts > $this->allowedAttempts;
+        return $this->allowedAttempts <= $failedAttempts;
 
     }
 

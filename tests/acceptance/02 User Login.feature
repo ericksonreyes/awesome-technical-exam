@@ -27,7 +27,7 @@ Feature: User login
 
   Scenario Outline: Password is empty.
     Given my e-mail is "<E-mail>"
-    Given my password is "<Password>"
+    And my password is "<Password>"
     And I confirm that my password is "<Password Confirmation>"
     When I try to login
     Then I will be denied access because my password is empty
@@ -38,7 +38,7 @@ Feature: User login
 
   Scenario Outline: Password was incorrect.
     Given my e-mail is "<E-mail>"
-    Given my password is "<Password>"
+    And my password is "<Password>"
     And I confirm that my password is "<Password Confirmation>"
     When I try to login
     Then I will be denied access because of incorrect password
@@ -74,7 +74,7 @@ Feature: User login
     When I try to login
     Then I will be denied access because of incorrect password
     When I try to login
-    Then I will be denied access because of incorrect password
+    Then I will be blocked because of multiple failed login attempts
     When I try to login
     Then I will be blocked because of multiple failed login attempts
 
