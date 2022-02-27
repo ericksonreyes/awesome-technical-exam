@@ -1,10 +1,4 @@
-# Backend Developer Assessment
-
-## Technologies
-- PHP
-- Redis
-- MySQL
-- Choose a framework that you are familiar with.
+# Github Users API 
 
 ## Requirements
 Create PHP API project that has an API endpoint that takes a list of github
@@ -21,6 +15,12 @@ by the number of public repositories)
 In order to access the API endpoint described above, another endpoint should be created for
 user registration and login.
 
+## Required technologies
+- PHP
+- Redis
+- MySQL
+- Choose a framework that you are familiar with. 
+
 ## Rules
 - Schema for User registration should be created in MySQL
 - Only registered users can request a list of GitHub user information.
@@ -33,11 +33,3 @@ GitHub for 2 minutes
 - The API endpoint needed to get github user information is `https://api.github.com/users/{username}`
 - Include proper error handling
 - Include proper logging
-- Provide a [README.md](../README.md) with instructions on how to execute your API endpoint
-
-## Bonus Challenge
-Calculate Hamming Distance
-The Hamming distance between two integers is the number of positions at which the corresponding
-bits are different.
-
-Given two integers x and y, calculate the Hamming distance.
