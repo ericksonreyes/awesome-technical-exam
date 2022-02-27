@@ -148,7 +148,12 @@ the core domain. Core domain has no database, web framework or web server relate
 Changing the dependency for the application layer doesn't require changes in the application layer codes. This architecture 
 relied on [Dependency Inversion Principle](https://en.wikipedia.org/wiki/Dependency_inversion_principle). Also I can 
 make the application working as intended even if I defer deciding the framework to be used or I have no installed web 
-or database servers yet.
+or database servers yet. 
   
 * [SOLID principles of object-oriented programming](https://en.wikipedia.org/wiki/SOLID). Principles that allows the code 
-to be separated by concerns, extensible, flexible and understandable. 
+to be separated by concerns, extensible, flexible and understandable.
+
+## Final notes
+Follow the commit history on how I started writing the acceptance tests for core domain, write unit tests for the classes, 
+code to make the tests pass and code refactoring. Once the core domain is working as intended that is the time I applying 
+it to the controllers, make related eloquent models, make classes that implements the interfaces that the core domain requires.     
