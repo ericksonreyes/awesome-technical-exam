@@ -100,17 +100,20 @@ line interface that supports shell scripts. Follow these steps.
     docker-compose run --rm php artisan migrate:fresh --seed
     ```
 
-Once the installation is complete you can browse the API at 
-* [http://localhost:18000/](http://localhost:18000/). 
-Port 18000 was chosen so that it will not conflict with any running web servers using the 8000 (which is a commonly 
-preferred API) port. 
+## How to check if the installation is complete.
+* Browse the API at [http://localhost:18000/](http://localhost:18000/). Port 18000 was chosen so that it will not conflict with any running web servers using the 8000 (which is a commonly 
+    preferred API) port. 
 
-You can access the MySQL using the following information.
-* Host: localhost
-* Port: 13306 (This was intentional so that it will not conflict with an existing MySQL instance in your computer.)
-* Username: homestead
-* Password: secret
-* Database: homestead
+* Access the MySQL database using the following information.
+    * Host: localhost
+    * Port: 13306 (This was intentional so that it will not conflict with an existing MySQL instance in your computer.)
+    * Username: homestead
+    * Password: secret
+    * Database: homestead
+
+* Check Docker application if all containers are up and running.
+
+    ![All containers are running](docs/images/00-01.png)
 
 ## Testing
 * [Testing the Github Users API](docs/GITHUB_API_TESTING.md)
