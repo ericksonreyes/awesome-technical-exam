@@ -127,6 +127,10 @@ the following test suites during coding and refactoring.
     ```shell script
     docker-compose run --rm php bin/phpspec run
     ```
+  
+## Viewing the test coverage
+To ensure that the core domain codes is 100% test covered browse the code coverage report page.
+* [/build/logs/phpspec_coverage/index.html](build/logs/phpspec_coverage/index.html)
 
 ## Applied development methods and disciplines.
 * [Domain-driven design](https://en.wikipedia.org/wiki/Domain-driven_design). The acceptance and core domain codes are 
