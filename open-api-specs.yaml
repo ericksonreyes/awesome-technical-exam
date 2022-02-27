@@ -1,0 +1,497 @@
+openapi: 3.0.2
+info:
+  title: Github Users REST API Server
+  description: Github Users REST API Server for technical exam completion
+  contact:
+    email: ercbluemonday@yahoo.com
+  version: 1.0.0
+servers:
+  - url: 'http://localhost:18000/v1/api'
+    description: Local Server
+    variables:
+      protocol:
+        enum:
+          - http
+        default: http
+
+tags:
+  - name: Public
+    description: Public API end points.
+  - name: Secured
+    description: Secured API end points.
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    Username:
+      name: username
+      in: query
+      description: Search for Github users matching the username provided. Can be comma separated values.
+      required: false
+      examples:
+        Single user:
+          value: ericksonreyes
+        Multiple users:
+          value: ericksonreyes,octocat
+      schema:
+        type: string
+  schemas:
+    User:
+      title: Github User
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+          description: Github user identifier.
+          readOnly: true
+        login:
+          type: string
+          example: octocat
+          description: Github username.
+          readOnly: true
+        name:
+          type: string
+          example: monalisa octocat
+          description: Github user full name.
+          readOnly: true
+        company:
+          type: string
+          example: Github
+          description: Company where the Github user is working in.
+        followers:
+          type: integer
+          example: 1
+          description: Total number of followers.
+          readOnly: true
+        public_repository_count:
+          type: integer
+          example: 1
+          description: Total number of public repositories.
+          readOnly: true
+        average_number_of_public_repository_followers:
+          type: integer
+          example: 12
+          description: Average number of followers per public repository.
+          readOnly: true
+        origin_repository:
+          type: string
+          example: Cache
+          description: Indicates if the record is from Cache or from Github
+          readOnly: true
+    Error:
+      type: object
+      properties:
+        _error:
+          type: object
+          description: Error Details.
+          readOnly: true
+          properties:
+            code:
+              type: string
+              description: Error code.
+            message:
+              type: string
+              description: Error description.
+
+paths:
+  /registration:
+    post:
+      tags:
+        - Public
+      summary: Account registration end point.
+      operationId: registerAccount
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+              properties:
+                email:
+                  description: E-mail address.
+                  type: string
+                  format: email
+                password:
+                  description: Password.
+                  type: string
+                  format: password
+                passwordConfirmation:
+                  description: Password confirmation.
+                  type: string
+                  format: password
+      responses:
+        '201':
+          description: Account created.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: Unique identifier to the newly registered user.
+                    example: user-10000001
+                  accessToken:
+                    type: string
+                    description: The access token string as issued by the authorization server.
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+                  tokenType:
+                    type: string
+                    description: The type of token this is.
+                    example: bearer
+                  expiresIn:
+                    type: integer
+                    description: Number of seconds that the access token will be valid.
+                    example: 3600
+        '400':
+          description: Invalid, incomplete or malformed request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Duplicate resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Request format is correct but failed in validation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: A server or application error was encountered.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '502':
+          description: The server was acting as a gateway or proxy and received an invalid response from the upstream server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: The server is unavailable at the moment.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '504':
+          description: The server was acting as a gateway or proxy and did not receive a timely response from the upstream server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /access_token:
+    post:
+      tags:
+        - Public
+      summary: Requests for an access token.
+      operationId: getOneAccessToken
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  minLength: 8
+                  example: ercbluemonday@yahoo.com
+                password:
+                  type: string
+                  format: password
+      responses:
+        '200':
+          description: User successfully authenticated.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                    description: The access token string as issued by the authorization server.
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+                  tokenType:
+                    type: string
+                    description: The type of token this is.
+                    example: bearer
+                  expiresIn:
+                    type: integer
+                    description: Number of seconds that the access token will be valid.
+                    example: 3600
+        '301':
+          description: Resource moved permanently.
+        '302':
+          description: Resource moved temporarily.
+        '304':
+          description: Resource has not changed or modified.
+        '400':
+          description: Invalid, incomplete or malformed request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: User session has expired.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '402':
+          description: The resource you are trying to access requires a payment to be settled.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: User has no permission to access this resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Resource does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Request method is not supported for the requested resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '408':
+          description: Request timeout.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Resource already exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '410':
+          description: Resource was permanently deleted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '415':
+          description: You are uploading an unsupported file.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Request format is correct but failed in validation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: A server or application error was encountered.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '501':
+          description: The request method you are using is not yet implemented.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '502':
+          description: The server was acting as a gateway or proxy and received an invalid response from the upstream server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: The server is unavailable at the moment.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '504':
+          description: The server was acting as a gateway or proxy and did not receive a timely response from the upstream server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '507':
+          description: Insufficient storage.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /users:
+    get:
+      tags:
+        - Secured
+      summary: Find Gitlab users
+      operationId: findGitlabUsers
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Username'
+      responses:
+        '200':
+          description: A collection of stored resources.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _embedded:
+                    type: object
+                    properties:
+                      users:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/User'
+        '301':
+          description: Resource moved permanently.
+        '302':
+          description: Resource moved temporarily.
+        '304':
+          description: Resource has not changed or modified.
+        '400':
+          description: Invalid, incomplete or malformed request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: User session has expired.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '402':
+          description: The resource you are trying to access requires a payment to be settled.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: User has no permission to access this resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Resource does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Request method is not supported for the requested resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '408':
+          description: Request timeout.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Resource already exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '410':
+          description: Resource was permanently deleted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '415':
+          description: You are uploading an unsupported file.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Request format is correct but failed in validation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: A server or application error was encountered.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '501':
+          description: The request method you are using is not yet implemented.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '502':
+          description: The server was acting as a gateway or proxy and received an invalid response from the upstream server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: The server is unavailable at the moment.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '504':
+          description: The server was acting as a gateway or proxy and did not receive a timely response from the upstream server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '507':
+          description: Insufficient storage.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
