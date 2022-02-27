@@ -148,7 +148,7 @@ ensures that the codes I am writing is according to my specification. With these
 and refactoring my code with less worry of deploying breaking changes since these tests provides the fastest feedback and
 does not rely on other factors (database engine, web servers etc).
 
-* [Hexagonal architecture](https://en.wikipedia.org/wiki/Hexagonal_architecture_(software). All dependencies points to 
+* [Hexagonal architecture](https://fideloper.com/hexagonal-architecture). All dependencies points to 
 the core domain. Core domain has no database, web framework or web server related codes. Heavy use of 
 [Interfaces](https://www.php.net/manual/en/language.oop5.interfaces.php) allows the application layer code in the 
 [/src/Github/Application/](/src/Github/Application) directory to switch and inject dependencies with flexibility. 
